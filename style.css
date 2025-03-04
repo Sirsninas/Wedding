@@ -1,34 +1,67 @@
 body {
     font-family: 'Georgia', serif;
-    background: linear-gradient(to right, #ffdde1, #ee9ca7);
+    background: linear-gradient(to right, #ffe4e1, #f8c8dc);
     color: #333;
     text-align: center;
     margin: 0;
     padding: 20px;
+    overflow: hidden;
 }
 
 .container {
     max-width: 600px;
-    background: #fff;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     margin: auto;
 }
 
-h1 {
-    color: #d63384;
+.title {
+    color: #b8336a;
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
 
 button {
-    background: #d63384;
-    color: #fff;
+    background: rgba(255, 255, 255, 0.3);
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-size: 16px;
 }
 
 button:hover {
-    background: #b91c72;
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.answer-btn {
+    display: block;
+    width: 80%;
+    margin: 10px auto;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
+    font-size: 16px;
+    border: none;
+}
+
+.answer-btn:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.fade-out {
+    transform: scale(1.1) rotate(15deg);
+    opacity: 0;
+    transition: transform 0.7s ease-out, opacity 0.7s ease-out;
 }
