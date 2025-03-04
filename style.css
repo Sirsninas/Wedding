@@ -1,36 +1,183 @@
+/* Vispārējie stili */
 body {
   font-family: 'Georgia', serif;
   background: linear-gradient(to right, #ffe4e1, #f8c8dc);
-  color: #333;
-  text-align: center;
   margin: 0;
-  padding: 20px;
+  padding: 0;
   overflow-x: hidden;
 }
 
+/* Intro lapas stili */
+.intro-container {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.intro-title {
+  color: #b8336a;
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.intro-text {
+  font-size: 1.2em;
+  color: #555;
+}
+
+/* Sirds pogu konteineris */
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-top: 50px;
+}
+
+/* Kopējais 3D sirds poga stils */
+.heart-button {
+  position: relative;
+  width: 120px;
+  height: 110px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+/* JĀ pogas sirds (sarkana, 3D, animācija: paceļas un rotē 360°) */
+.heart-button.yes {
+  background: red;
+  transform: rotate(-45deg);
+  animation: liftRotate 3s infinite;
+}
+
+.heart-button.yes::before,
+.heart-button.yes::after {
+  content: "";
+  position: absolute;
+  background: red;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
+
+.heart-button.yes::before {
+  top: -60px;
+}
+
+.heart-button.yes::after {
+  left: 60px;
+}
+
+/* JĀ pogas uzraksts */
+.heart-button.yes .heart-text {
+  position: absolute;
+  top: 40px;
+  left: 30px;
+  transform: rotate(45deg);
+  color: white;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+/* Keyframes JĀ pogai */
+@keyframes liftRotate {
+  0% {
+    transform: translateY(0) rotate(-45deg) scale(1);
+  }
+  50% {
+    transform: translateY(-15px) rotate(135deg) scale(1.05);
+  }
+  100% {
+    transform: translateY(0) rotate(315deg) scale(1);
+  }
+}
+
+/* NĒ pogas sirds (salausta, pelēka, 3D, pulso atvēršanās/aizvēršanās efekts) */
+.heart-button.no {
+  background: #a0a0a0;
+  transform: rotate(-45deg);
+  animation: pulseOpenClose 2s infinite;
+}
+
+.heart-button.no::before,
+.heart-button.no::after {
+  content: "";
+  position: absolute;
+  background: #a0a0a0;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
+
+.heart-button.no::before {
+  top: -60px;
+}
+
+.heart-button.no::after {
+  left: 60px;
+}
+
+/* NĒ pogas uzraksti – sadalīti uz divām pusēm */
+.heart-half {
+  position: absolute;
+  color: white;
+  font-weight: bold;
+  font-size: 1.5em;
+  transform: rotate(45deg);
+}
+
+.heart-half.left {
+  top: 35px;
+  left: 20px;
+}
+
+.heart-half.right {
+  top: 35px;
+  right: 20px;
+}
+
+/* Keyframes NĒ pogai (pulsējošs efekts) */
+@keyframes pulseOpenClose {
+  0% {
+    transform: translateY(0) rotate(-45deg) scale(1);
+  }
+  50% {
+    transform: translateY(0) rotate(-45deg) scale(1.1);
+  }
+  100% {
+    transform: translateY(0) rotate(-45deg) scale(1);
+  }
+}
+
+/* Stili aptaujas lapai (play.html) */
 .container {
   max-width: 600px;
   padding: 20px;
   margin: auto;
+  text-align: center;
 }
 
 .title {
   color: #b8336a;
 }
 
-.intro {
-  margin-bottom: 20px;
-}
-
+/* Glassmorphism efekts aptaujas lodziņiem */
 .glass {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 20px;
+  margin: 20px auto;
+  max-width: 600px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
 
+/* Aptaujas jautājuma teksts */
+#question-text {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+}
+
+/* Atbilžu pogas aptaujai */
 .answer-btn {
   display: block;
   width: 80%;
@@ -49,7 +196,7 @@ body {
   background: rgba(255, 255, 255, 0.6);
 }
 
-/* Animācija: paceļas un izgaist kā mākonis */
+/* Animācija – jautājuma bloks paceļas un izgaist kā mākonis */
 @keyframes riseAndDissolve {
   0% {
     transform: translateY(0);
