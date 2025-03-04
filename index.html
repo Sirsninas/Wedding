@@ -1,22 +1,49 @@
 <!DOCTYPE html>
 <html lang="lv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mūsu romantiskā aptauja ❤️</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iepazīšanās ar mīlestību</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1 class="title">Mūsu romantiskā aptauja 💕</h1>
-        <p class="intro">Neliela aptauja, lai salīdzinātu mūsu sapņus un vēlmes! 😊</p>
+  <div class="intro-container">
+    <h1 class="intro-title">Laipni lūdzam mīlestības ceļojumā</h1>
+    <p class="intro-text">
+      Šī ir mūsu romantiskā aptauja, kas palīdz mums iepazīt vienam otru vēl dziļāk.<br>
+      Izvēlies, kā jūties par nākamo soli.
+    </p>
+  </div>
 
-        <div id="question-container" class="glass">
-            <p id="question-text"></p>
-            <div id="answer-buttons"></div>
-        </div>
+  <div class="button-container">
+    <!-- JĀ pogas sirds: 3D, paceļas un rotē 360° nepārtraukti, ar uzrakstu "JĀ" -->
+    <div class="heart-button yes" id="yes-button">
+      <span class="heart-text">JĀ</span>
     </div>
+    <!-- NĒ pogas sirds: 3D, "salausta" animācija (nedaudz pulso), uz kuras kreisajā pusē rakstīts "N" un labajā "Ē" -->
+    <div class="heart-button no" id="no-button">
+      <span class="heart-half left">N</span>
+      <span class="heart-half right">Ē</span>
+    </div>
+  </div>
 
-    <script src="script.js"></script>
+  <script>
+    // Funkcija, kas pārbauda, vai URL beigās ir uid parametrs,
+    // un atgriež to kā query string (piem., "?uid=XYZ").
+    function getUidParam() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('uid') ? '?uid=' + params.get('uid') : '';
+    }
+
+    // Ja lietotājs spiež uz "JĀ", novirza uz play.html ar uid, ja tāds ir.
+    document.getElementById("yes-button").addEventListener("click", function() {
+      window.location.href = "play.html" + getUidParam();
+    });
+
+    // Ja lietotājs spiež uz "NĒ", novirza uz sad.html.
+    document.getElementById("no-button").addEventListener("click", function() {
+      window.location.href = "sad.html";
+    });
+  </script>
 </body>
 </html>
