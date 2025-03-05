@@ -8,21 +8,21 @@
 </head>
 <body>
   <div class="content-container">
-    <!-- Virsraksts – paliek no HTML -->
+    <!-- Virsraksts – fiksēts HTML -->
     <h1 class="intro-title">Laipni lūdzam mūsu mīlestības ceļojumā!</h1>
     <!-- Teksts ielādēts no Google Sheets (šūna A2, "Lapa1") -->
     <p class="intro-text">Ielādē datus...</p>
-  </div>
-  
-  <!-- Apakšā izvietotas sirds emoji pogas -->
-  <div class="hearts-container">
-    <div class="emoji-button" id="ja-button">
-      <div class="emoji-content ja-emoji">❤️</div>
-      <div class="button-label">JĀ</div>
-    </div>
-    <div class="emoji-button" id="ne-button">
-      <div class="emoji-content ne-emoji">💔</div>
-      <div class="button-label">NĒ</div>
+    
+    <!-- Sirds emoji pogas tiek izvietotas zem teksta -->
+    <div class="hearts-container">
+      <div class="emoji-button" id="ja-button">
+        <div class="emoji-content ja-emoji">❤️</div>
+        <div class="button-label">JĀ</div>
+      </div>
+      <div class="emoji-button" id="ne-button">
+        <div class="emoji-content ne-emoji">💔</div>
+        <div class="button-label">NĒ</div>
+      </div>
     </div>
   </div>
   
@@ -59,7 +59,7 @@
       const neEmoji = document.querySelector("#ne-button .ne-emoji");
       // Nospiežot "NĒ", tūlīt mainām simbolu uz sad emoji
       neEmoji.innerText = "😢";
-      // Pievienojam klasi, kas ar CSS pārvērš emoji, samazinot augstumu (platums nemainās)
+      // Pievienojam klasi, kas samazina tikai augstumu (platums nemainās)
       neEmoji.classList.add("collapsed");
       setTimeout(() => {
         navigateTo("sad.html");
