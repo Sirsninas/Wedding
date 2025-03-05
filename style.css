@@ -118,8 +118,10 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
+  /* Remove any explicit background to let global styles apply */
   overflow-x: hidden;
   transition: opacity 1s ease, filter 1s ease;
+  min-height: 100vh;
 }
 
 /* Page Header */
@@ -139,7 +141,7 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container */
+/* Active Card Container: below header, centered */
 .active-card-container {
   position: fixed;
   top: 15%;
@@ -151,14 +153,14 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container */
+/* Deck Container: fixed at bottom, horizontally scrollable */
 .deck-container,
 #deck-container {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 20vh; /* Adjust height as needed */
+  height: 20vh; /* Adjust as needed */
   z-index: 2;
   display: flex;
   gap: 0.25rem;
@@ -168,7 +170,7 @@ html, body {
   scroll-snap-type: x mandatory;
 }
 
-/* Question Card */
+/* Question Card (common styles) */
 .question-card {
   background: rgba(255,255,255,0.2);
   backdrop-filter: blur(10px);
@@ -185,32 +187,36 @@ html, body {
   scroll-snap-align: center;
 }
 
-/* Active card: fully visible */
+/* Active Card: fully visible */
 .active-card {
   opacity: 1;
   z-index: 2;
 }
 
-/* Deck card: for answered cards; fixed size (70% of active) */
+/* Deck Card: for answered questions in the deck.
+   Now, deck cards take up nearly the full width (90%) so that the entire question can be read,
+   but their height is reduced (e.g. 40px max) and font size is smaller. */
 .deck-card {
-  width: 150px; /* Fixed width */
-  margin-right: -40px; /* Overlap for stacking effect */
+  width: 90%;
+  max-width: 800px;
+  margin: 0 auto;
+  max-height: 40px; /* Reduced height */
   opacity: 0.7;
   z-index: 1;
   position: relative;
   overflow: hidden;
   transition: all 0.5s ease;
   scroll-snap-align: center;
+  font-size: 1rem; /* Reduced font size */
 }
 
-/* When a deck card is centered (via scroll snap), it expands */
+/* When a deck card is centered via scroll snap, it can expand slightly if desired */
 .expanded-deck-card {
-  width: 80%;
-  max-width: 640px;
-  margin-right: 10px;
-  max-height: 120px;
+  width: 95%;
+  max-width: 760px;
+  max-height: 80px;
   transform: perspective(1000px) rotateY(10deg);
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 /* Slide down-out animation for active card when answered */
@@ -228,14 +234,14 @@ html, body {
   animation: cardSlideDownOut 1s forwards;
 }
 
-/* Card question text */
+/* Card Question Text */
 .card-question-text {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   color: #333;
 }
 
-/* Answer container */
+/* Answer Container */
 .card-answer-container {
   display: flex;
   flex-wrap: wrap;
@@ -243,7 +249,7 @@ html, body {
   justify-content: center;
 }
 
-/* Answer button */
+/* Answer Button */
 .card-answer-btn {
   flex: 1 1 40%;
   min-width: 150px;
@@ -260,7 +266,7 @@ html, body {
   background: rgba(255,255,255,0.7);
 }
 
-/* Results button */
+/* Results Button */
 .results-btn {
   display: block;
   width: 90%;
@@ -283,7 +289,6 @@ html, body {
   text-align: center;
   margin: 1.875rem auto;
 }
-
 /* ==========================
    Sad lapas (vai citu vienkāršu lapu) stili
    ========================== */
