@@ -143,7 +143,7 @@ html, body {
 /* Active Card Container */
 .active-card-container {
   position: fixed;
-  top: 15%; /* Adjust as needed */
+  top: 15%; /* Adjust as needed to be below header */
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -152,7 +152,7 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container for collapsed cards */
+/* Deck Container for Collapsed Cards */
 .deck-container,
 #deck-container {
   position: fixed;
@@ -164,12 +164,6 @@ html, body {
   flex-direction: column;
   gap: 0.25rem;
   padding: 0.5rem;
-}
-
-/* When deck is sliding up to expand a collapsed card */
-.deck-slide-up {
-  transition: transform 0.5s ease;
-  transform: translateY(-10%);
 }
 
 /* Question Card Styles */
@@ -188,36 +182,32 @@ html, body {
   position: relative;
 }
 
-/* Active card: full size */
+/* Active card: full view */
 .active-card {
   opacity: 1;
   z-index: 2;
 }
 
-/* Collapsed card: only about 20px visible (approx. 5mm) */
-.collapsed-card, .answered-card {
+/* Collapsed card (answered): only top ~20px visible */
+.collapsed-card,
+.answered-card {
+  max-height: 20px;
   opacity: 0.7;
   z-index: 1;
-  max-height: 20px;
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
+  overflow: hidden;
 }
 
-/* Slide down animation for active card when an answer is selected */
-@keyframes cardSlideDown {
-  0% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0.7;
-    transform: translateY(150px);
-  }
+/* Fade out animation for active card when answered */
+@keyframes cardFadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
 }
-.card-slide-down {
-  animation: cardSlideDown 1s forwards;
+.card-fade-out {
+  animation: cardFadeOut 1s forwards;
 }
 
 /* Card question text */
@@ -243,13 +233,13 @@ html, body {
   font-size: 1.25rem;
   border: none;
   border-radius: 0.625rem;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255,255,255,0.4);
   transition: transform 0.3s ease, background 0.3s ease;
   cursor: pointer;
 }
 .card-answer-btn:hover {
   transform: translateY(-0.5rem);
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255,255,255,0.7);
 }
 
 /* Results button style */
