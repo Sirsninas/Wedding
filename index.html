@@ -8,12 +8,8 @@
 </head>
 <body>
   <div class="content-container">
-    <!-- Virsraksts – fiksēts HTML -->
     <h1 class="intro-title">Laipni lūdzam mūsu mīlestības ceļojumā!</h1>
-    <!-- Teksts ielādēts no Google Sheets (šūna A2, "Lapa1") -->
     <p class="intro-text">Ielādē datus...</p>
-    
-    <!-- Sirds emoji pogas tiek izvietotas zem teksta -->
     <div class="hearts-container">
       <div class="emoji-button" id="ja-button">
         <div class="emoji-content ja-emoji">❤️</div>
@@ -35,13 +31,13 @@
       })
       .catch(error => console.error("Kļūda ielādējot tekstu no Google Sheets:", error));
       
-    // Ja URL satur "uid" parametru, to saglabājam pāradresācijā
+    // Atgriež "uid" parametru, ja tas ir URL beigās.
     function getUidParam() {
       const params = new URLSearchParams(window.location.search);
       return params.has('uid') ? '?uid=' + params.get('uid') : '';
     }
     
-    // Funkcija, kas uzliek "mākonis" efektu un pēc 1 sekundes pāradresē uz norādīto lapu
+    // Funkcija, kas uzliek "mākonis" efektu un pēc 1 sekundes pāradresē uz norādīto lapu.
     function navigateTo(target) {
       document.body.classList.add("cloud-dissolve");
       setTimeout(() => {
@@ -54,12 +50,10 @@
       navigateTo("play.html");
     });
     
-    // "NĒ" pogai – izpilda sad animāciju un pēc tam pāradresē uz sad.html
+    // "NĒ" pogai – maina sirds simbolu uz sad emoji, izpilda collapse animāciju un pēc tam pāriet uz sad.html
     document.getElementById("ne-button").addEventListener("click", function() {
       const neEmoji = document.querySelector("#ne-button .ne-emoji");
-      // Nospiežot "NĒ", tūlīt mainām simbolu uz sad emoji
       neEmoji.innerText = "😢";
-      // Pievienojam klasi, kas samazina tikai augstumu (platums nemainās)
       neEmoji.classList.add("collapsed");
       setTimeout(() => {
         navigateTo("sad.html");
