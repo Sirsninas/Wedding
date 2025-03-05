@@ -3,44 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iepazīšanās ar mīlestību</title>
+  <title>Mīlestības Iepazīšanās</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="intro-container">
-    <h1 class="intro-title">Laipni lūdzam mīlestības ceļojumā</h1>
+    <h1 class="intro-title">Laipni lūdzam mūsu mīlestības ceļojumā!</h1>
     <p class="intro-text">
-      Šī ir mūsu romantiskā aptauja, kas palīdz mums iepazīt vienam otru vēl dziļāk.<br>
-      Izvēlies, kā jūties par nākamo soli.
+      Šī ir romantiska aptauja, kas palīdzēs mums uzzināt, cik saderīgi esam.<br>
+      Izvēlies, ja esi gatava soļiem uz priekšu!
     </p>
   </div>
-
+  
   <div class="button-container">
-    <!-- JĀ pogas sirds: 3D, paceļas un rotē 360° nepārtraukti, ar uzrakstu "JĀ" -->
-    <div class="heart-button yes" id="yes-button">
-      <span class="heart-text">JĀ</span>
+    <!-- "JĀ" poga: 3D sarkana sirds, kas griežas ap Z asi -->
+    <div class="heart-container yes" id="yes-button">
+      <svg class="heart-svg" viewBox="0 0 32 29.6" width="120" height="110">
+          <path d="M23.6,0c-2.7,0-5,2.3-5,5c0,1.7,0.8,3.3,2.1,4.4l0.5,0.4l0.5-0.4
+          C22.2,8.3,23,6.7,23,5C23,2.3,20.7,0,18,0C15.3,0,13,1.8,12,4.3C11,1.8,8.7,0,6,0C3.3,0,1,2.3,1,5
+          c0,3.7,3.4,6.4,8.6,11.5l3.4,3.1l3.4-3.1C27.6,11.4,31,8.7,31,5C31,2.3,28.7,0,26,0z"/>
+      </svg>
+      <span class="heart-label">JĀ</span>
     </div>
-    <!-- NĒ pogas sirds: 3D, "salausta" animācija (nedaudz pulso), uz kuras kreisajā pusē rakstīts "N" un labajā "Ē" -->
-    <div class="heart-button no" id="no-button">
-      <span class="heart-half left">N</span>
-      <span class="heart-half right">Ē</span>
+    
+    <!-- "NĒ" poga: eleganti noformēta 3D sirds ar smalku pulsējošu animāciju -->
+    <div class="heart-container no" id="no-button">
+      <svg class="heart-svg" viewBox="0 0 32 29.6" width="120" height="110">
+          <path d="M23.6,0c-2.7,0-5,2.3-5,5c0,1.7,0.8,3.3,2.1,4.4l0.5,0.4l0.5-0.4
+          C22.2,8.3,23,6.7,23,5C23,2.3,20.7,0,18,0C15.3,0,13,1.8,12,4.3C11,1.8,8.7,0,6,0C3.3,0,1,2.3,1,5
+          c0,3.7,3.4,6.4,8.6,11.5l3.4,3.1l3.4-3.1C27.6,11.4,31,8.7,31,5C31,2.3,28.7,0,26,0z"/>
+      </svg>
+      <div class="heart-label-container">
+        <span class="heart-half left">N</span>
+        <span class="heart-half right">Ē</span>
+      </div>
     </div>
   </div>
-
+  
   <script>
-    // Funkcija, kas pārbauda, vai URL beigās ir uid parametrs,
-    // un atgriež to kā query string (piem., "?uid=XYZ").
+    // Atgriež query string, ja URL satur "uid" parametru.
     function getUidParam() {
       const params = new URLSearchParams(window.location.search);
-      return params.get('uid') ? '?uid=' + params.get('uid') : '';
+      return params.has('uid') ? '?uid=' + params.get('uid') : '';
     }
-
-    // Ja lietotājs spiež uz "JĀ", novirza uz play.html ar uid, ja tāds ir.
+    
+    // Spiežot uz "JĀ", novirza uz play.html (ar uid, ja tas ir).
     document.getElementById("yes-button").addEventListener("click", function() {
       window.location.href = "play.html" + getUidParam();
     });
-
-    // Ja lietotājs spiež uz "NĒ", novirza uz sad.html.
+    
+    // Spiežot uz "NĒ", novirza uz sad.html.
     document.getElementById("no-button").addEventListener("click", function() {
       window.location.href = "sad.html";
     });
