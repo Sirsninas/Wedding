@@ -7,38 +7,37 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Fiksēts header -->
+  <!-- Fixed header -->
   <header class="page-header">
     <h1>Būtiskie jautājumi</h1>
   </header>
-
-  <!-- Aktīvā kartiņa konteiners: šeit tiek rādīts pašreizējais jautājums pilnā izmērā -->
+  
+  <!-- Active card container: shows the current (unanswered) question -->
   <div id="active-card-container" class="active-card-container"></div>
-
-  <!-- Deck konteiners: rādīs visus atbildētos jautājumus horizontāli -->
+  
+  <!-- Deck container: holds all answered cards in a horizontal row -->
   <div id="deck-container" class="deck-container"></div>
-
-  <!-- Finish konteiners: parādās, kad visi jautājumi ir atbildēti -->
+  
+  <!-- Finish container: appears when all questions are answered -->
   <div id="finish-container" class="finish-container" style="display: none;">
     <button id="finish-btn" class="results-btn">Skatīt rezultātus</button>
   </div>
-
+  
   <script>
   (function(){
     const uid = new URLSearchParams(window.location.search).get('uid') || "";
     let questions = [];
-    let activeCardIndex = 0; // indeks, kas norāda uz pirmo neatbildēto jautājumu
-    // deckLiftedStatus – objektā var tikt glabāta informācija par paceltajām (lietotāja mijiedarbības rezultātā) deck kartiņām
+    let activeCardIndex = 0; // Index of first unanswered question.
+    // deckLiftedStatus: tracks whether a deck card is “lifted” (via hover/touch)
     let deckLiftedStatus = {};
 
-    // Izgūst jautājumus no Google Apps Script web aplikācijas
     function fetchQuestions() {
       const url = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec?action=getQuestions&uid=" + uid;
       fetch(url)
         .then(response => response.json())
         .then(data => {
           questions = data.questions;
-          // Meklē pirmo neatbildēto jautājumu
+          // Set activeCardIndex to first unanswered; if all answered, set it to questions.length (no active card)
           let idx = questions.findIndex(q => !q.selected || q.selected === "");
           activeCardIndex = (idx === -1) ? questions.length : idx;
           renderPage();
@@ -46,14 +45,13 @@
         .catch(error => console.error("Error fetching questions:", error));
     }
 
-    // Renderē gan aktīvo kartiņu, gan deck (neaktīvās) kartiņas
     function renderPage() {
       renderActiveCard();
       renderDeck();
       checkFinish();
     }
 
-    // Renderē aktīvo kartiņu (ja ir)
+    // Render the active card (first unanswered question)
     function renderActiveCard() {
       const activeContainer = document.getElementById("active-card-container");
       activeContainer.innerHTML = "";
@@ -63,25 +61,23 @@
       }
     }
 
-    // Renderē deck – visas atbildētās kartiņas (neatkarīgi no aktīvās kārtas)
+    // Render the deck: all answered cards (for this UID) are shown in sheet order.
     function renderDeck() {
       const deckContainer = document.getElementById("deck-container");
       deckContainer.innerHTML = "";
-      // Atlasām visus jautājumus, kuriem ir atbilde
+      // Filter answered questions
       const answered = questions.filter(q => q.selected && q.selected !== "");
       answered.forEach((q, i) => {
         const deckCard = createCard(q, i, false);
-        // Deck kartiņas ir 70% no aktīvās kartiņas izmēra
-        deckCard.style.width = "70%";
-        deckCard.style.maxWidth = "560px"; // 70% no 800px
-        // Nav vertikāla pārklāšanās – kartiņas ir blakus, ritinājams horizontāli
-        deckCard.style.marginRight = "10px";
+        // In deck mode, assign a fixed width.
+        deckCard.style.width = "150px";
+        deckCard.style.flexShrink = "0";
         deckContainer.appendChild(deckCard);
       });
     }
 
-    // Izveido kartiņas elementu.
-    // isActive === true → aktīvā kartiņa, false → deck kartiņa.
+    // Create a card element.
+    // isActive true → active card; false → deck card.
     function createCard(q, index, isActive) {
       const card = document.createElement("div");
       card.classList.add("question-card");
@@ -91,15 +87,18 @@
       } else {
         card.classList.add("deck-card");
       }
-
-      // Jautājuma teksts
+      
+      // Card question text
       const qText = document.createElement("p");
       qText.classList.add("card-question-text");
       qText.innerText = q.text;
-      // Aktīvajām kartiņām izmērs ir normāls; deck kartiņām fonta izmērs ir nedaudz mazāks (noteikts CSS)
+      // For deck cards, reduce font size a bit further
+      if (!isActive) {
+        qText.style.fontSize = "1.2rem";
+      }
       card.appendChild(qText);
-
-      // Atbilžu konteineris
+      
+      // Answer container
       const answerContainer = document.createElement("div");
       answerContainer.classList.add("card-answer-container");
       q.answers.forEach(answer => {
@@ -109,6 +108,7 @@
         if (q.selected && q.selected === answer) {
           btn.innerHTML = "❤️ " + answer;
         }
+        // Only active card allows answer selection.
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
           if (isActive) {
@@ -118,8 +118,8 @@
         answerContainer.appendChild(btn);
       });
       card.appendChild(answerContainer);
-
-      // Ja kartiņa ir deck (neaktīva), tad pielieto hover/touch efektu – tikai parādīt, ka to var aktivizēt, bet neaktivizēt automātiski
+      
+      // For deck cards: add hover/touch listeners to “lift” the card without activating it immediately.
       if (!isActive) {
         card.addEventListener("mouseenter", () => {
           card.classList.add("deck-card-lift");
@@ -135,14 +135,14 @@
         }, { passive: true });
         card.addEventListener("touchend", () => {
           card.classList.remove("deck-card-lift");
-          // Ja lietotājs atkārtoti piespiež paceltu kartiņu, tā aktivizējas
           if (deckLiftedStatus[index]) {
+            // Activate only if tapped deliberately when lifted
             activeCardIndex = index;
             renderPage();
           }
           deckLiftedStatus[index] = false;
         }, { passive: true });
-        // Desktop: divreiz klikšķināt, ja pacelta, lai aktivizētu
+        // For desktop: require a second click when lifted.
         card.addEventListener("click", () => {
           if (card.classList.contains("deck-card-lift")) {
             activeCardIndex = index;
@@ -150,11 +150,11 @@
           }
         });
       }
-
+      
       return card;
     }
 
-    // Kad aktīvā kartiņa tiek atbildēta.
+    // When an answer is selected on the active card.
     function selectAnswer(cardIndex, selectedAnswer, buttonElem) {
       const q = questions[cardIndex];
       q.selected = selectedAnswer;
@@ -165,7 +165,7 @@
         buttonElem.innerHTML = "❤️ " + selectedAnswer;
       }
       updateAnswer(q.row, selectedAnswer);
-      // Animate active card: fade out and slide down into the deck.
+      // Animate the active card: fade out and slide down into the deck.
       activeCard.classList.add("card-slide-down-out");
       setTimeout(() => {
         if (activeCardIndex < questions.length - 1) {
@@ -175,7 +175,7 @@
       }, 1000);
     }
 
-    // Nosūta POST pieprasījumu, lai atjauninātu atbildi Google Sheets (no-cors režīmā)
+    // Sends a POST request to update the answer in Google Sheets (using no-cors)
     function updateAnswer(row, answer) {
       const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec";
       const data = { action: "updateAnswer", uid: uid, row: row, answer: answer };
