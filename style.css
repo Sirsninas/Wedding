@@ -1,4 +1,6 @@
-/* Globalie stili – fona gradienta pāreja no mīksta rozā (#fff0f5) līdz baltam (#ffffff) */
+/* ==========================
+   Globalie stili
+   ========================== */
 body {
   margin: 0;
   padding: 0;
@@ -8,13 +10,15 @@ body {
   transition: opacity 1s ease, filter 1s ease;
 }
 
-/* "Mākonis" pārejas efekts – kad lapa izgaist pirms pāradresācijas */
+/* Pārejas efekts – visa lapa izgaist kā mākonis (blur + caurspīdība) */
 .cloud-dissolve {
   opacity: 0;
   filter: blur(8px);
 }
 
-/* Centrēts saturamais konteiners, kas aizņem visu ekrānu */
+/* ==========================
+   Index lapas stili
+   ========================== */
 .content-container {
   min-height: 100vh;
   display: flex;
@@ -25,21 +29,19 @@ body {
   padding: 20px;
 }
 
-/* Virsraksts */
 .intro-title {
   font-size: 3em;
   color: #d17c9c;
   margin-bottom: 10px;
 }
 
-/* Pamatteksts */
 .intro-text {
   font-size: 1.5em;
   color: #555;
   margin-bottom: 40px;
 }
 
-/* Hearts container – sirds pogas izvietotas blakus zem teksta */
+/* Sirds pogu konteiners – izvietots zem teksta, blakus */
 .hearts-container {
   display: flex;
   gap: 60px;
@@ -47,7 +49,7 @@ body {
   align-items: center;
 }
 
-/* Emoji pogu stils – palielināts izmērs */
+/* Emoji pogu stils – palielināts izmērs, animācijas */
 .emoji-button {
   width: 200px;
   height: 200px;
@@ -69,7 +71,6 @@ body {
   text-shadow: 1px 1px 3px #000;
 }
 
-/* Emoji saturs – palielināts simbolu izmērs */
 .emoji-content {
   font-size: 7em;
   display: flex;
@@ -78,7 +79,7 @@ body {
   height: 100%;
 }
 
-/* "JĀ" sirds – laipna, priecīga animācija ar lecošu un maināmu griešanos */
+/* "JĀ" sirds – priecīga animācija ar lēcieniem un maināmām rotācijām */
 .ja-emoji {
   animation: happyJump 3s ease-in-out infinite;
 }
@@ -92,7 +93,7 @@ body {
   100% { transform: translateY(0) rotate(0deg); }
 }
 
-/* "NĒ" sirds – sākotnēji maiga pulsēšana; pēc klikšķa, kad tiek "sasaplokāta", samazina tikai augstumu */
+/* "NĒ" sirds – sākotnēji pulsēšana; kad nospiesta, paliek samazināta pēc augstuma */
 .ne-emoji {
   animation: sadPulse 2s ease-in-out infinite;
   transition: transform 1s ease, opacity 1s ease;
@@ -104,8 +105,119 @@ body {
   100% { transform: scale(1); }
 }
 
-/* Kad "NĒ" sirds tiek sasaplokāta, samazinās tikai augstums (scaleY) */
 .ne-emoji.collapsed {
   transform: scaleY(0.3);
   opacity: 0.5;
 }
+
+/* ==========================
+   Play lapas un citu lapu stili
+   ========================== */
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.title {
+  color: #b8336a;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+/* Glassmorphism efekts jautājuma lodziņam */
+.glass {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 40px;
+  margin: 20px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  min-height: 200px;
+}
+
+/* Jautājuma teksts (play lapā) */
+#question-text {
+  font-size: 2em;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Atbilžu pogu stils (play lapā) */
+.answer-btn {
+  display: block;
+  width: 90%;
+  margin: 15px auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.8em;
+  border: none;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.answer-btn:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Fade out animācija – jautājuma lodziņš izgaist, pārvietojoties uz augšu */
+@keyframes fadeOutUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-150px);
+    filter: blur(8px);
+  }
+}
+.fade-out {
+  animation: fadeOutUp 1s forwards;
+}
+
+/* Fade in animācija – nākamais jautājums parādās no apakšas */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(150px);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+.fade-in {
+  animation: fadeInUp 1s forwards;
+}
+
+/* Rezultātu pogas stils (ja beidzoties jautājumiem parādās rezultātu poga) */
+.results-btn {
+  display: block;
+  width: 90%;
+  margin: 20px auto;
+  padding: 20px;
+  background: #d17c9c;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.8em;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.results-btn:hover {
+  background: #b8336a;
+}
+
+/* ==========================
+   Sad lapas (vai citu vienkāršu lapu) stili
+   ========================== */
+/* Ja nepieciešams, pielāgojat arī vienkāršu lapu stilus – piemēram, sad.html var izmantot globalos stilus */
