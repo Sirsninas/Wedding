@@ -1,4 +1,4 @@
-/* Globalie stili – maigi rozā, kas pāriet uz ļoti maigu zilu toni */
+/* Globalie stili – mīksti rozā, kas pakāpeniski pāriet uz ļoti maigu zilu */
 body {
   margin: 0;
   padding: 0;
@@ -8,16 +8,17 @@ body {
   transition: opacity 1s ease, filter 1s ease;
 }
 
-/* "Mākonis" efektam, kas aktivizējas pārejas brīdī */
+/* "Mākonis" efekts pārejai */
 .cloud-dissolve {
   opacity: 0;
   filter: blur(8px);
 }
 
-/* Saturamā daļa (virsraksts un teksts) */
+/* Saturamā daļa: virsraksts un teksts */
 .content-container {
   min-height: 80vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -27,7 +28,7 @@ body {
 .intro-title {
   font-size: 2.8em;
   margin-bottom: 10px;
-  color: #d17c9c;  /* Maigs rozā */
+  color: #d17c9c; /* Maigs rozā */
 }
 
 .intro-text {
@@ -68,12 +69,12 @@ body {
   text-shadow: 1px 1px 3px #000;
 }
 
-/* Palielināts emoji izmērs */
+/* Emoji saturs – palielināts izmērs */
 .emoji-content {
   font-size: 5em;
 }
 
-/* "JĀ" emoji animācija: pulsē un griežas ap Z asi */
+/* "JĀ" emoji animācija: pulsē un rotā ap Z asi */
 .ja-emoji {
   animation: pulseRotate 3s linear infinite;
 }
@@ -84,13 +85,13 @@ body {
   100% { transform: scale(1) rotateZ(360deg); }
 }
 
-/* "NĒ" emoji animācija: paplašināsies un atgriežas sākotnējā formā */
+/* "NĒ" emoji sākotnējais stils (bez animācijas) */
 .ne-emoji {
-  animation: expandContract 2s ease-in-out infinite;
+  transition: transform 1s ease, opacity 1s ease;
 }
 
-@keyframes expandContract {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.2); }
-  100% { transform: scale(1); }
+/* Kad "NĒ" emoji tiek "sasaplokāta" – tikai augstums samazinās, platums paliek nemainīgs */
+.ne-emoji.collapsed {
+  transform: scaleY(0.3);
+  opacity: 0.5;
 }
