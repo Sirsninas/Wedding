@@ -1,9 +1,8 @@
-/* Globalie stili */
+/* Globalie stili – fona gradienta pāreja no mīksta rozā (#fff0f5) līdz baltam (#ffffff) */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
-  /* Maigs fons – no maiga rozā (augšā) līdz baltam (apakšā) */
   background: linear-gradient(to bottom, #fff0f5, #ffffff);
   overflow-x: hidden;
   transition: opacity 1s ease, filter 1s ease;
@@ -15,105 +14,98 @@ body {
   filter: blur(8px);
 }
 
-/* Konteiners, kas aptver visu saturu play lapā */
-.container {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
+/* Centrēts saturamais konteiners, kas aizņem visu ekrānu */
+.content-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-}
-
-/* Lapas virsraksts */
-.title {
-  color: #b8336a;
-  font-size: 2em;
-  margin-bottom: 20px;
-}
-
-/* Glassmorphism efekts jautājuma lodziņiem */
-.glass {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
   padding: 20px;
-  margin: 20px auto;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
-/* Jautājuma teksts */
-#question-text {
+/* Virsraksts */
+.intro-title {
+  font-size: 3em;
+  color: #d17c9c;
+  margin-bottom: 10px;
+}
+
+/* Pamatteksts */
+.intro-text {
   font-size: 1.5em;
-  margin-bottom: 20px;
+  color: #555;
+  margin-bottom: 40px;
 }
 
-/* Atbilžu pogu stils */
-.answer-btn {
-  display: block;
-  width: 80%;
-  margin: 10px auto;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
+/* Hearts container – sirds pogas izvietotas blakus zem teksta */
+.hearts-container {
+  display: flex;
+  gap: 60px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Emoji pogu stils – palielināts izmērs */
+.emoji-button {
+  width: 200px;
+  height: 200px;
   cursor: pointer;
-  font-size: 16px;
-  border: none;
-  transition: transform 0.3s ease, background 0.3s ease;
+  position: relative;
+  transition: transform 0.3s ease;
 }
 
-.answer-btn:hover {
-  transform: translateY(-8px);
-  background: rgba(255, 255, 255, 0.6);
+.emoji-button:hover {
+  transform: translateY(-10px);
 }
 
-/* Animācija – jautājuma lodziņš paceļas un izgaist kā mākonis */
-@keyframes riseAndDissolve {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-    filter: blur(0);
-  }
-  100% {
-    transform: translateY(-150px);
-    opacity: 0;
-    filter: blur(8px);
-  }
-}
-.rise-away {
-  animation: riseAndDissolve 1s forwards;
-}
-
-/* Animācija – nākamais jautājums parādās no "mākona" */
-@keyframes appearFromCloud {
-  0% {
-    transform: translateY(150px);
-    opacity: 0;
-    filter: blur(8px);
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-    filter: blur(0);
-  }
-}
-.appear-from-cloud {
-  animation: appearFromCloud 1s forwards;
-}
-
-/* Rezultātu pogas stils (ja pēdējā jautājuma beigās tiek parādīta) */
-.results-btn {
-  display: block;
-  width: 80%;
-  margin: 20px auto;
-  padding: 12px;
-  background: #d17c9c;
+.button-label {
+  position: absolute;
+  bottom: -40px;
+  width: 100%;
+  font-size: 2em;
   color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background 0.3s;
+  text-shadow: 1px 1px 3px #000;
 }
-.results-btn:hover {
-  background: #b8336a;
+
+/* Emoji saturs – palielināts simbolu izmērs */
+.emoji-content {
+  font-size: 7em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+/* "JĀ" sirds – laipna, priecīga animācija ar lecošu un maināmu griešanos */
+.ja-emoji {
+  animation: happyJump 3s ease-in-out infinite;
+}
+
+@keyframes happyJump {
+  0%   { transform: translateY(0) rotate(0deg); }
+  20%  { transform: translateY(-30px) rotate(15deg); }
+  40%  { transform: translateY(0) rotate(0deg); }
+  60%  { transform: translateY(-20px) rotate(-15deg); }
+  80%  { transform: translateY(0) rotate(10deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+/* "NĒ" sirds – sākotnēji maiga pulsēšana; pēc klikšķa, kad tiek "sasaplokāta", samazina tikai augstumu */
+.ne-emoji {
+  animation: sadPulse 2s ease-in-out infinite;
+  transition: transform 1s ease, opacity 1s ease;
+}
+
+@keyframes sadPulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* Kad "NĒ" sirds tiek sasaplokāta, samazinās tikai augstums (scaleY) */
+.ne-emoji.collapsed {
+  transform: scaleY(0.3);
+  opacity: 0.5;
 }
