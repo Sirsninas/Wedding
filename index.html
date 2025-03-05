@@ -8,89 +8,41 @@
 </head>
 <body>
   <div class="intro-container">
+    <!-- Virsraksts paliek no HTML -->
     <h1 class="intro-title">Laipni lūdzam mūsu mīlestības ceļojumā!</h1>
-    <p class="intro-text">
-      Šī ir romantiska aptauja, kas palīdzēs mums uzzināt, cik saderīgi esam.<br>
-      Ja esi gatava soļiem uz priekšu, izvēlies!
-    </p>
+    <!-- Teksts ielādēts no Google Sheets -->
+    <p class="intro-text">Ielādē datus...</p>
   </div>
   
   <div class="button-container">
-    <!-- "JĀ" poga: konteineris, kurā tiks ielādēts tavs 3D modelis JA.glb -->
-    <div class="model-button" id="ja-button">
-      <div class="model-container" id="ja-container"></div>
+    <!-- "JĀ" poga ar sarkanu sirds emoji -->
+    <div class="emoji-button" id="ja-button">
+      <div class="emoji-content ja-emoji">❤️</div>
       <div class="button-label">JĀ</div>
     </div>
-    <!-- "NĒ" poga: konteineris, kurā tiks ielādēts tavs 3D modelis NE.glb -->
-    <div class="model-button" id="ne-button">
-      <div class="model-container" id="ne-container"></div>
+    <!-- "NĒ" poga ar salausto sirds emoji -->
+    <div class="emoji-button" id="ne-button">
+      <div class="emoji-content ne-emoji">💔</div>
       <div class="button-label">NĒ</div>
     </div>
   </div>
   
-  <!-- Three.js un GLTFLoader -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r153/three.min.js" integrity="sha512-cURTXB3E41CT6TgWsk0EbwXidUNHQlg9NdHEh7k6AVg/zYcd4Z6WSZErT4bQguN5xj6DwDZVY9jHVryK76uGpg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/loaders/GLTFLoader.js"></script>
-  
+  <!-- Ielādējam tekstu no Google Sheets -->
   <script>
-    // Funkcija, kas inicializē Three.js scēnu un ielādē GLB modeli konkrētā konteinerī.
-    function initModel(containerId, modelUrl) {
-      const container = document.getElementById(containerId);
-      const width = container.clientWidth || 150;  // noklusējuma izmērs, ja nav noteikts
-      const height = container.clientHeight || 150;
+    fetch("https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec")
+      .then(response => response.text())
+      .then(data => {
+        document.querySelector('.intro-text').innerText = data;
+      })
+      .catch(error => console.error("Kļūda ielādējot tekstu no Google Sheets:", error));
       
-      // Izveidojam scēnu, kameru un renderer
-      const scene = new THREE.Scene();
-      // Atstāj fona caurspīdīgu
-      scene.background = null;
-      
-      const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-      camera.position.set(0, 0, 3);
-      
-      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      renderer.setSize(width, height);
-      container.appendChild(renderer.domElement);
-      
-      // Pievienojam gaismu
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-      scene.add(ambientLight);
-      
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-      directionalLight.position.set(5, 5, 5);
-      scene.add(directionalLight);
-      
-      // Ielādējam modeli, izmantojot GLTFLoader
-      const loader = new THREE.GLTFLoader();
-      loader.load(modelUrl, function(gltf) {
-        const model = gltf.scene;
-        // Pielāgo sākotnējo mērogu un pozīciju, ja nepieciešams
-        model.scale.set(1, 1, 1);
-        scene.add(model);
-        
-        // Animācijas funkcija
-        function animate() {
-          requestAnimationFrame(animate);
-          // Rotējam modeli ap Y asi
-          model.rotation.y += 0.01;
-          renderer.render(scene, camera);
-        }
-        animate();
-      }, undefined, function(error) {
-        console.error("Error loading model from", modelUrl, error);
-      });
-    }
-    
-    // Inicializējam modeļus index lapā
-    initModel("ja-container", "JA.glb");
-    initModel("ne-container", "NE.glb");
-    
-    // Pārbauda, vai URL satur "uid" parametru.
+    // Atgriež query string, ja URL satur "uid" parametru.
     function getUidParam() {
       const params = new URLSearchParams(window.location.search);
       return params.has('uid') ? '?uid=' + params.get('uid') : '';
     }
     
-    // Klikšķa notikumi – pāradresācija
+    // Klikšķa notikumi – pāradresācija uz play.html vai sad.html.
     document.getElementById("ja-button").addEventListener("click", function() {
       window.location.href = "play.html" + getUidParam();
     });
