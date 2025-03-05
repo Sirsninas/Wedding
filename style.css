@@ -140,10 +140,10 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container */
+/* Active Card Container: below header */
 .active-card-container {
   position: fixed;
-  top: 15%; /* Adjust as needed to be below header */
+  top: 15%; /* Adjust to be below header */
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -152,7 +152,7 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container for Collapsed Cards */
+/* Deck Container for Collapsed Cards: fixed at the bottom */
 .deck-container,
 #deck-container {
   position: fixed;
@@ -171,7 +171,7 @@ html, body {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 1rem;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2);
   margin: 0 auto;
   padding: 1.5rem;
   transition: opacity 0.5s ease, transform 0.5s ease;
@@ -188,7 +188,7 @@ html, body {
   z-index: 2;
 }
 
-/* Collapsed card (answered): only top ~20px visible */
+/* Collapsed card: only 20px visible (approx. 5mm) */
 .collapsed-card,
 .answered-card {
   max-height: 20px;
@@ -199,15 +199,29 @@ html, body {
   left: 0;
   right: 0;
   overflow: hidden;
+  transition: max-height 0.3s ease, transform 0.3s ease;
 }
 
-/* Fade out animation for active card when answered */
-@keyframes cardFadeOut {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+/* On hover, collapsed card lifts up a bit (revealing more) */
+.collapsed-card:hover {
+  max-height: 50px;
+  transform: translateY(-10px);
 }
-.card-fade-out {
-  animation: cardFadeOut 1s forwards;
+
+/* Slide down-out animation for active card when an answer is selected:
+   it slides down and fades out */
+@keyframes cardSlideDownOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100vh);
+  }
+}
+.card-slide-down-out {
+  animation: cardSlideDownOut 1s forwards;
 }
 
 /* Card question text */
@@ -233,13 +247,13 @@ html, body {
   font-size: 1.25rem;
   border: none;
   border-radius: 0.625rem;
-  background: rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.4);
   transition: transform 0.3s ease, background 0.3s ease;
   cursor: pointer;
 }
 .card-answer-btn:hover {
   transform: translateY(-0.5rem);
-  background: rgba(255,255,255,0.7);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 /* Results button style */
