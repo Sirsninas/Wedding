@@ -159,7 +159,7 @@ html, body {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 20vh; /* Reduced height for deck */
+  height: 20vh; /* Adjust height as needed */
   z-index: 2;
   display: flex;
   gap: 0.25rem;
@@ -169,7 +169,7 @@ html, body {
   scroll-snap-type: x mandatory;
 }
 
-/* Question Card */
+/* Question Card (common styles) */
 .question-card {
   background: rgba(255,255,255,0.2);
   backdrop-filter: blur(10px);
@@ -186,17 +186,15 @@ html, body {
   scroll-snap-align: center;
 }
 
-/* Active card: fully visible */
+/* Active Card: fully visible */
 .active-card {
   opacity: 1;
   z-index: 2;
 }
 
-/* Deck card: for answered questions in the deck.
-   They are now fixed in width so that the full question is visible.
-   Height is fixed to 40px, and font size is reduced. */
+/* Deck Card: for answered cards in the deck */
 .deck-card {
-  width: 90%;
+  width: 90%; /* Full width to show complete question */
   max-width: 800px;
   margin: 0 auto;
   height: 40px; /* Fixed height */
@@ -207,6 +205,30 @@ html, body {
   transition: all 0.5s ease;
   scroll-snap-align: center;
   font-size: 1rem; /* Reduced font size */
+}
+
+/* When a deck card is centered (via scroll snap), it expands */
+.expanded-deck-card {
+  width: 95%;
+  max-width: 760px;
+  height: 80px;
+  transform: perspective(1000px) rotateY(10deg);
+  font-size: 1rem;
+}
+
+/* Fade-in animation for active cards (re-fade) */
+@keyframes cardFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.card-fade-in {
+  animation: cardFadeIn 0.5s forwards;
 }
 
 /* Slide down-out animation for active card when answered */
