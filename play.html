@@ -19,64 +19,64 @@
     const uid = new URLSearchParams(window.location.search).get('uid') || "";
     
     let questions = [];
-    let activeCardIndex = 0; // aktīvās kartiņas indekss
+    let activeCardIndex = 0;
     
-    // Iegūst jautājumus no Google Sheets, izmantojot jūsu Google Apps Script web app endpoint
+    // Izgūst jautājumus no Google Sheets
     function fetchQuestions() {
       const url = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7T1ojVoCF43P1RgQ/exec?action=getQuestions&uid=" + uid;
       fetch(url)
         .then(response => response.json())
         .then(data => {
-          questions = data.questions; // sagaidām struktūru: [ { row, text, answers:[...], selected }, ... ]
+          questions = data.questions; // sagaidām: [{ row, text, answers:[...], selected }, ... ]
           renderCards();
         })
         .catch(error => console.error("Error fetching questions:", error));
     }
     
-    // Renderē visas kartiņas – aktīvā kartiņa ir pilna un redzama, pārējās minimizētas zemāk
+    // Renderē visas kartiņas – aktīvā kartiņa ir pilna, pārējās redzamas kā peek (to augšgals)
     function renderCards() {
       const container = document.getElementById("cards-container");
       container.innerHTML = "";
       questions.forEach((q, index) => {
+        // Katru jautājumu renderē kā kartiņu
         const card = document.createElement("div");
         card.classList.add("question-card");
         card.dataset.index = index;
-        // Atšķir aktīvo un neaktīvo kartiņu stilu
         if (index === activeCardIndex) {
           card.classList.add("active-card");
         } else {
           card.classList.add("inactive-card");
         }
         
-        // Kartiņas saturā – jautājuma teksts
+        // Kartiņas satur: jautājuma tekst (lielā fontā) un atbilžu pogas
         const qText = document.createElement("p");
         qText.classList.add("card-question-text");
         qText.innerText = q.text;
         card.appendChild(qText);
         
-        // Atbilžu pogu konteiners
         const answerContainer = document.createElement("div");
         answerContainer.classList.add("card-answer-container");
         q.answers.forEach(answer => {
           const btn = document.createElement("button");
           btn.classList.add("card-answer-btn");
           btn.innerText = answer;
-          // Ja šai kartiņai jau ir saglabāta atbilde, iezīmē izvēlēto variantu ar "❤️"
-          if(q.selected && q.selected === answer) {
+          // Ja atbilde jau saglabāta, pievieno sirds emoji
+          if (q.selected && q.selected === answer) {
             btn.innerHTML = "❤️ " + answer;
           }
           btn.addEventListener("click", (e) => {
-            e.stopPropagation(); // lai kartiņas klikšķi netiktu izsaukti
+            e.stopPropagation(); // neizsauc kartiņas klikšķa handleri
             selectAnswer(index, answer, btn);
           });
           answerContainer.appendChild(btn);
         });
         card.appendChild(answerContainer);
         
-        // Klikšķis uz kartiņas – ja tā nav aktīva, tā kļūst par aktīvo
+        // Ja klikšķina uz neaktīvās kartiņas, to aktivizē (pačeļ uz augšu)
         card.addEventListener("click", () => {
-          if (activeCardIndex !== index) {
-            setActiveCard(index);
+          if (index !== activeCardIndex) {
+            activeCardIndex = index;
+            renderCards();
           }
         });
         
@@ -85,18 +85,12 @@
       checkFinish();
     }
     
-    // Atjauno aktīvās kartiņas indeksu un pārrenderē
-    function setActiveCard(index) {
-      activeCardIndex = index;
-      renderCards();
-    }
-    
-    // Kad tiek izvēlēta atbilde kartiņā
+    // Kad tiek izvēlēta atbilde
     function selectAnswer(cardIndex, selectedAnswer, buttonElem) {
       const q = questions[cardIndex];
       q.selected = selectedAnswer;
       
-      // Atjauno izvēlēto pogu vizuāli – pievieno sirds emoji
+      // Atjaunina UI – visiem pogām no attiecīgās kartiņas noņem marķējumu, izvēlētajai pievieno "❤️"
       const card = document.querySelector(`.question-card[data-index='${cardIndex}']`);
       const btns = card.querySelectorAll(".card-answer-btn");
       btns.forEach(btn => btn.innerHTML = btn.innerText);
@@ -105,34 +99,26 @@
       // Nosūta atjauninājumu uz Google Sheets
       updateAnswer(q.row, selectedAnswer);
       
-      // Animācija: aktīvā kartiņa "izgaist" un pārvietojas uz augšu (fade out up)
+      // Animācija: aktīvā kartiņa fade out uz augšu
       card.classList.add("card-fade-out");
       setTimeout(() => {
-        // Pēc animācijas, ja vēl ir kartiņas, aktīvā kartiņas indeks tiek palielināts (vai, ja vēlams, var izvēlēties nākamo, kas nav atbildēta)
-        if (activeCardIndex < questions.length - 1) {
-          activeCardIndex++;
-        }
+        activeCardIndex = Math.min(cardIndex + 1, questions.length - 1);
         renderCards();
       }, 1000);
     }
     
-    // Nosūta POST pieprasījumu, lai atjauninātu izvēlēto atbildi Google Sheets
+    // Nosūta POST pieprasījumu uz Google Sheets bez no-cors (atgriežoties pie noklusētā režīma)
     function updateAnswer(row, answer) {
       const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7T1ojVoCF43P1RgQ/exec";
-      const data = {
-        action: "updateAnswer",
-        uid: uid,
-        row: row,
-        answer: answer
-      };
+      const data = { action: "updateAnswer", uid: uid, row: row, answer: answer };
       fetch(updateUrl, {
         method: "POST",
-        mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
-      }).then(() => {
-        console.log("Answer updated at row " + row);
-      }).catch(error => console.error("Error updating answer:", error));
+      })
+      .then(response => response.text())
+      .then(responseText => console.log("Updated: " + responseText))
+      .catch(error => console.error("Error updating answer:", error));
     }
     
     // Ja visi jautājumi ir atbildēti, parāda pogu uz rezultātiem
