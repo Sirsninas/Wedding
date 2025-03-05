@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Romantiskā Aptauja – Kartiņas</title>
-  <link rel="stylesheet" href="play.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- Fixed header -->
@@ -12,10 +12,10 @@
     <h1>Būtiskie jautājumi</h1>
   </header>
   
-  <!-- Active card container (centered below header) -->
+  <!-- Active card container: shows the current active (unanswered) question -->
   <div id="active-card-container" class="active-card-container"></div>
   
-  <!-- Deck container (fixed at bottom, horizontally scrollable) -->
+  <!-- Deck container: shows answered cards in a horizontal scrollable row -->
   <div id="deck-container" class="deck-container"></div>
   
   <!-- Finish container: appears when all questions are answered -->
@@ -28,10 +28,9 @@
     const uid = new URLSearchParams(window.location.search).get('uid') || "";
     let questions = [];
     let activeCardIndex = 0; // index of first unanswered (active) question
-    // For deck cards, we track "lifted" status per card
-    const deckLiftedStatus = {}; // key: index, value: boolean
-
-    // Fetch questions from Google Apps Script
+    let liftedDeckStatus = {}; // stores lifted status for deck cards
+    
+    // Fetch questions from Google Apps Script web app
     function fetchQuestions() {
       const url = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec?action=getQuestions&uid=" + uid;
       fetch(url)
@@ -44,33 +43,33 @@
         })
         .catch(error => console.error("Error fetching questions:", error));
     }
-
-    // Render active card and deck.
+    
+    // Render active card and deck cards
     function renderDeck() {
       const activeContainer = document.getElementById("active-card-container");
       const deckContainer = document.getElementById("deck-container");
       activeContainer.innerHTML = "";
       deckContainer.innerHTML = "";
       
-      // Render active card
+      // Render active card if exists
       if (activeCardIndex < questions.length) {
         const activeCard = createCard(questions[activeCardIndex], activeCardIndex, true);
         activeContainer.appendChild(activeCard);
       }
       
-      // Render deck cards (answered cards: indices 0 to activeCardIndex - 1)
+      // Render deck cards for answered questions (indices 0 to activeCardIndex - 1)
       for (let i = 0; i < activeCardIndex; i++) {
         const deckCard = createCard(questions[i], i, false);
-        // In deck mode, cards are displayed horizontally with a small right margin.
+        // In deck mode, cards have a small right offset for stacking
         deckCard.style.marginRight = "10px";
         deckContainer.appendChild(deckCard);
       }
       
       checkFinish();
     }
-
+    
     // Create a card element.
-    // isActive=true → active card; false → deck card.
+    // isActive === true means the card is active (displayed fully), false means it's in the deck.
     function createCard(q, index, isActive) {
       const card = document.createElement("div");
       card.classList.add("question-card");
@@ -82,12 +81,12 @@
         card.classList.add("deck-card");
       }
       
-      // Card text – use a slightly smaller font for deck cards.
+      // Card question text (active cards use 1.5rem; deck cards use 1.4rem)
       const qText = document.createElement("p");
       qText.classList.add("card-question-text");
       qText.innerText = q.text;
       if (!isActive) {
-        qText.style.fontSize = "1.4rem"; // active: 1.5rem, deck: 1.4rem
+        qText.style.fontSize = "1.4rem";
       }
       card.appendChild(qText);
       
@@ -98,10 +97,10 @@
         const btn = document.createElement("button");
         btn.classList.add("card-answer-btn");
         btn.innerText = answer;
-        if (q.selected && q.selected === answer) {
+        if(q.selected && q.selected === answer) {
           btn.innerHTML = "❤️ " + answer;
         }
-        // Only active card allows answer selection.
+        // Only allow answer selection on active card
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
           if (isActive) {
@@ -112,47 +111,59 @@
       });
       card.appendChild(answerContainer);
       
-      // For deck cards: add hover/touch listeners to lift the card (but do not activate until tapped twice)
+      // For deck cards: add hover/touch events to lift them without activating immediately.
       if (!isActive) {
         card.addEventListener("mouseenter", () => {
           card.classList.add("deck-card-lift");
-          deckLiftedStatus[index] = true;
+          liftedDeckStatus[index] = true;
         });
         card.addEventListener("mouseleave", () => {
           card.classList.remove("deck-card-lift");
-          deckLiftedStatus[index] = false;
+          liftedDeckStatus[index] = false;
         });
         card.addEventListener("touchstart", () => {
           card.classList.add("deck-card-lift");
-          deckLiftedStatus[index] = true;
+          liftedDeckStatus[index] = true;
         }, { passive: true });
         card.addEventListener("touchend", () => {
           card.classList.remove("deck-card-lift");
-          if (deckLiftedStatus[index]) {
-            // On a second tap (if already lifted), activate the card.
-            activeCardIndex = index;
-            renderDeck();
+          // Only activate if the card was tapped twice (simulate double-tap)
+          if (liftedDeckStatus[index]) {
+            if (card.classList.contains("deck-card-active")) {
+              activeCardIndex = index;
+              renderDeck();
+            } else {
+              card.classList.add("deck-card-active");
+              setTimeout(() => {
+                card.classList.remove("deck-card-active");
+              }, 300);
+            }
           }
-          deckLiftedStatus[index] = false;
+          liftedDeckStatus[index] = false;
         }, { passive: true });
-        // For desktop: require a second click if already lifted.
+        // For desktop, require a second click if already lifted.
         card.addEventListener("click", () => {
-          if (card.classList.contains("deck-card-lift")) {
+          if (card.classList.contains("deck-card-active")) {
             activeCardIndex = index;
             renderDeck();
+          } else {
+            card.classList.add("deck-card-active");
+            setTimeout(() => {
+              card.classList.remove("deck-card-active");
+            }, 300);
           }
         });
       }
       
       return card;
     }
-
+    
     // When an answer is selected on the active card.
     function selectAnswer(cardIndex, selectedAnswer, buttonElem) {
       const q = questions[cardIndex];
       q.selected = selectedAnswer;
       
-      // Update active card UI: mark selected answer.
+      // Update active card UI: mark selected answer with a heart emoji.
       const activeCard = document.querySelector("#active-card-container .question-card");
       if (activeCard) {
         const btns = activeCard.querySelectorAll(".card-answer-btn");
@@ -171,7 +182,7 @@
         renderDeck();
       }, 1000);
     }
-
+    
     // Sends a POST request to update the answer in Google Sheets (using no-cors)
     function updateAnswer(row, answer) {
       const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec";
@@ -185,18 +196,18 @@
       .then(() => console.log("Atbilde ierakstīta rindā " + row))
       .catch(error => console.error("Kļūda ierakstot atbildi:", error));
     }
-
-    // Check if all questions are answered; if so, show the finish button.
+    
+    // Check if all questions are answered; if so, show finish button.
     function checkFinish() {
       const allAnswered = questions.every(q => q.selected && q.selected !== "");
       const finishContainer = document.getElementById("finish-container");
       finishContainer.style.display = allAnswered ? "block" : "none";
     }
-
+    
     document.getElementById("finish-btn").addEventListener("click", () => {
       window.location.href = "results.html" + (uid ? ("?uid=" + uid) : "");
     });
-
+    
     fetchQuestions();
   })();
   </script>
