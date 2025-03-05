@@ -140,10 +140,10 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container: placed below header, centered */
+/* Active Card Container: fixed below header, centered, with fixed width */
 .active-card-container {
   position: fixed;
-  top: 15%; /* Adjust as needed */
+  top: 15%;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -152,7 +152,7 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container for Collapsed Cards: fixed at bottom */
+/* Deck Container: fixed at the bottom, horizontally scrollable */
 .deck-container,
 #deck-container {
   position: fixed;
@@ -161,9 +161,9 @@ html, body {
   right: 0;
   z-index: 2;
   display: flex;
-  flex-direction: column;
   gap: 0.25rem;
   padding: 0.5rem;
+  overflow-x: auto;
 }
 
 /* Question Card Styles */
@@ -188,29 +188,24 @@ html, body {
   z-index: 2;
 }
 
-/* Collapsed/Answered card: only about 20px visible (approx. 5mm) */
-.collapsed-card,
-.answered-card {
-  max-height: 20px;
+/* Collapsed (deck) card: visible fully (no text hiding) but with a fixed small height */
+.deck-card {
+  max-height: 20px; /* About 5mm */
   opacity: 0.7;
   z-index: 1;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   overflow: hidden;
   transition: max-height 0.3s ease, transform 0.3s ease;
 }
 
-/* Hover effect for collapsed card: lift by 100px */
-.collapsed-card:hover,
-.collapsed-card-lift {
-  max-height: 120px; /* Adjust as needed to reveal the question */
+/* Hover effect on deck card: lift it by 100px */
+.deck-card:hover,
+.deck-card-lift {
+  max-height: 120px; /* Increase height to reveal text */
   transform: translateY(-100px);
 }
 
-/* Slide down-out animation for active card when an answer is selected:
-   the card fades out and slides down off-screen */
+/* Slide down-out animation for active card when answer is selected */
 @keyframes cardSlideDownOut {
   0% {
     opacity: 1;
