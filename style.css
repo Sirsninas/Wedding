@@ -118,7 +118,6 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
-  /* Remove any explicit background to let global styles apply */
   overflow-x: hidden;
   transition: opacity 1s ease, filter 1s ease;
   min-height: 100vh;
@@ -141,7 +140,7 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container: below header, centered */
+/* Active Card Container */
 .active-card-container {
   position: fixed;
   top: 15%;
@@ -153,14 +152,14 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container: fixed at bottom, horizontally scrollable */
+/* Deck Container */
 .deck-container,
 #deck-container {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 20vh; /* Adjust as needed */
+  height: 20vh; /* Reduced height for deck */
   z-index: 2;
   display: flex;
   gap: 0.25rem;
@@ -170,7 +169,7 @@ html, body {
   scroll-snap-type: x mandatory;
 }
 
-/* Question Card (common styles) */
+/* Question Card */
 .question-card {
   background: rgba(255,255,255,0.2);
   backdrop-filter: blur(10px);
@@ -187,20 +186,20 @@ html, body {
   scroll-snap-align: center;
 }
 
-/* Active Card: fully visible */
+/* Active card: fully visible */
 .active-card {
   opacity: 1;
   z-index: 2;
 }
 
-/* Deck Card: for answered questions in the deck.
-   Now, deck cards take up nearly the full width (90%) so that the entire question can be read,
-   but their height is reduced (e.g. 40px max) and font size is smaller. */
+/* Deck card: for answered questions in the deck.
+   They are now fixed in width so that the full question is visible.
+   Height is fixed to 40px, and font size is reduced. */
 .deck-card {
   width: 90%;
   max-width: 800px;
   margin: 0 auto;
-  max-height: 40px; /* Reduced height */
+  height: 40px; /* Fixed height */
   opacity: 0.7;
   z-index: 1;
   position: relative;
@@ -208,15 +207,6 @@ html, body {
   transition: all 0.5s ease;
   scroll-snap-align: center;
   font-size: 1rem; /* Reduced font size */
-}
-
-/* When a deck card is centered via scroll snap, it can expand slightly if desired */
-.expanded-deck-card {
-  width: 95%;
-  max-width: 760px;
-  max-height: 80px;
-  transform: perspective(1000px) rotateY(10deg);
-  font-size: 1rem;
 }
 
 /* Slide down-out animation for active card when answered */
