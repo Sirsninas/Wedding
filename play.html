@@ -21,19 +21,21 @@
     let questions = [];
     let activeCardIndex = 0;
     
-    // Izgūst jautājumus no Google Sheets, izmantojot jūsu Google Apps Script web app endpoint
+    // JSONP: Ielādē jautājumus, izmantojot callback
     function fetchQuestions() {
-      const url = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7T1ojVoCF43P1RgQ/exec?action=getQuestions&uid=" + uid;
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          questions = data.questions; // sagaidām struktūru: [{ row, text, answers:[...], selected }, ... ]
-          renderCards();
-        })
-        .catch(error => console.error("Error fetching questions:", error));
+      const script = document.createElement("script");
+      // Pievieno callback=handleQuestions
+      script.src = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7T1ojVoCF43P1RgQ/exec?action=getQuestions&uid=" + uid + "&callback=handleQuestions";
+      document.body.appendChild(script);
     }
     
-    // Renderē visas kartiņas – aktīvā kartiņa ir pilna, pārējās redzamas kā peek (tikai to augšējā daļa)
+    // Callback funkcija, ko izsauc Code.gs un kura saņem jautājumu datus
+    function handleQuestions(data) {
+      questions = data.questions; // Sagaidām, ka Code.gs atgriež { questions: [...] }
+      renderCards();
+    }
+    
+    // Renderē kartiņas
     function renderCards() {
       const container = document.getElementById("cards-container");
       container.innerHTML = "";
@@ -47,7 +49,7 @@
           card.classList.add("inactive-card");
         }
         
-        // Kartiņas saturā – jautājuma teksts
+        // Kartiņas jautājuma teksts
         const qText = document.createElement("p");
         qText.classList.add("card-question-text");
         qText.innerText = q.text;
@@ -60,12 +62,11 @@
           const btn = document.createElement("button");
           btn.classList.add("card-answer-btn");
           btn.innerText = answer;
-          // Ja kartiņai jau ir saglabāta atbilde, iezīmē to ar "❤️"
           if(q.selected && q.selected === answer) {
             btn.innerHTML = "❤️ " + answer;
           }
           btn.addEventListener("click", (e) => {
-            e.stopPropagation(); // Lai kartiņas klikšķi netiktu izsaukti
+            e.stopPropagation();
             selectAnswer(index, answer, btn);
           });
           answerContainer.appendChild(btn);
@@ -85,21 +86,17 @@
       checkFinish();
     }
     
-    // Kad tiek izvēlēta atbilde kartiņā
     function selectAnswer(cardIndex, selectedAnswer, buttonElem) {
       const q = questions[cardIndex];
       q.selected = selectedAnswer;
       
-      // Atjauno UI – atzīmē izvēlēto pogu ar "❤️"
       const card = document.querySelector(`.question-card[data-index='${cardIndex}']`);
       const btns = card.querySelectorAll(".card-answer-btn");
       btns.forEach(btn => btn.innerHTML = btn.innerText);
       buttonElem.innerHTML = "❤️ " + selectedAnswer;
       
-      // Nosūta atjauninājumu uz Google Sheets
       updateAnswer(q.row, selectedAnswer);
       
-      // Animācija: aktīvā kartiņa fade out uz augšu
       card.classList.add("card-fade-out");
       setTimeout(() => {
         activeCardIndex = Math.min(cardIndex + 1, questions.length - 1);
@@ -107,7 +104,6 @@
       }, 1000);
     }
     
-    // Nosūta POST pieprasījumu uz Google Sheets bez "no-cors" režīma
     function updateAnswer(row, answer) {
       const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7T1ojVoCF43P1RgQ/exec";
       const data = { action: "updateAnswer", uid: uid, row: row, answer: answer };
@@ -121,14 +117,12 @@
       .catch(error => console.error("Error updating answer:", error));
     }
     
-    // Ja visi jautājumi ir atbildēti, parāda pogu uz rezultātiem
     function checkFinish() {
       const allAnswered = questions.every(q => q.selected && q.selected !== "");
       const finishContainer = document.getElementById("finish-container");
       finishContainer.style.display = allAnswered ? "block" : "none";
     }
     
-    // Finish pogas klikšķis
     document.getElementById("finish-btn").addEventListener("click", () => {
       window.location.href = "results.html" + (uid ? ("?uid=" + uid) : "");
     });
