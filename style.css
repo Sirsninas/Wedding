@@ -113,7 +113,16 @@ body {
 /* ==========================
    Play lapas un citu lapu stili
    ========================== */
-/* Global background and transition settings */
+/* ==========================
+   Global Styles
+   ========================== */
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
+}
 body {
   margin: 0;
   padding: 0;
@@ -123,65 +132,65 @@ body {
   transition: opacity 1s ease, filter 1s ease;
 }
 
-/* Active card container (full active question) */
+/* Responsive fluid typography and spacing */
+h1, p {
+  margin: 0;
+  padding: 0;
+}
+  
+/* ==========================
+   Active Card & Deck Containers
+   ========================== */
 .active-card-container {
   position: fixed;
-  top: 10%;
+  top: 5vh;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
+  max-width: 800px;
   z-index: 3;
+  padding: 1rem;
 }
-
-/* Deck container for collapsed cards (answered ones) */
-.deck-container,
-#deck-container,
-#cards-container {
+.deck-container {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 10px;
   z-index: 2;
+  padding: 0.5rem;
+  display: flex;
+  overflow-x: auto;
+  gap: 0.5rem;
 }
 
-/* Question Card Styles */
+/* ==========================
+   Card Styles (Deck Layout)
+   ========================== */
 .question-card {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  margin: 10px auto;
-  padding: 30px;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
+  padding: 1.5rem;
   transition: transform 0.5s ease, opacity 0.5s ease;
   cursor: pointer;
   width: 100%;
+  max-width: 800px;
   position: relative;
 }
-
-/* Active card: fully visible */
 .active-card {
   transform: translateY(0);
   opacity: 1;
   z-index: 2;
 }
-
-/* Collapsed card: positioned so only about 5mm (approx. 10px) of its top is visible */
 .collapsed-card {
   transform: translateY(calc(100% - 10px));
   opacity: 0.7;
   z-index: 1;
 }
 
-/* Expanded card style if the deck is opened (not used in this version) */
-.expanded-card {
-  transform: translateY(0);
-  opacity: 1;
-  z-index: 1;
-  margin-bottom: 20px;
-}
-
-/* Slide down animation for active card transitioning into the deck */
+/* Slide down animation for active card */
 @keyframes cardSlideDown {
   0% {
     opacity: 1;
@@ -198,58 +207,88 @@ body {
 
 /* Card question text */
 .card-question-text {
-  font-size: 2em;
-  margin-bottom: 20px;
+  font-size: 1.75rem;
+  margin-bottom: 1.25rem;
   color: #333;
 }
 
-/* Answer container within card */
+/* ==========================
+   Answer Buttons
+   ========================== */
 .card-answer-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 1rem;
   justify-content: center;
 }
-
-/* Large answer button styles */
 .card-answer-btn {
   flex: 1 1 40%;
   min-width: 150px;
-  padding: 15px;
-  font-size: 1.6em;
+  padding: 0.75rem;
+  font-size: 1.25rem;
   border: none;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   background: rgba(255, 255, 255, 0.4);
   transition: transform 0.3s ease, background 0.3s ease;
   cursor: pointer;
 }
 .card-answer-btn:hover {
-  transform: translateY(-8px);
+  transform: translateY(-0.5rem);
   background: rgba(255, 255, 255, 0.7);
 }
 
-/* Results button style */
+/* ==========================
+   Results and Finish Button
+   ========================== */
 .results-btn {
   display: block;
   width: 90%;
-  margin: 20px auto;
-  padding: 20px;
+  margin: 1.25rem auto;
+  padding: 1rem;
   background: #d17c9c;
   color: #fff;
   border: none;
-  border-radius: 12px;
-  font-size: 1.8em;
+  border-radius: 0.75rem;
+  font-size: 1.25rem;
   cursor: pointer;
   transition: background 0.3s;
 }
 .results-btn:hover {
   background: #b8336a;
 }
-
-/* Finish container */
 .finish-container {
   text-align: center;
-  margin: 30px auto;
+  margin: 1.875rem auto;
+}
+
+/* ==========================
+   Responsive Adjustments
+   ========================== */
+@media (max-width: 768px) {
+  .card-question-text {
+    font-size: 1.5rem;
+  }
+  .card-answer-btn {
+    font-size: 1.1rem;
+    min-width: 120px;
+  }
+  .active-card-container, .deck-container {
+    width: 95%;
+    max-width: 95%;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-question-text {
+    font-size: 1.25rem;
+  }
+  .card-answer-btn {
+    font-size: 1rem;
+    min-width: 100px;
+  }
+  .results-btn {
+    font-size: 1rem;
+  }
 }
 
 /* ==========================
