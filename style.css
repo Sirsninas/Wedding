@@ -114,16 +114,45 @@ body {
    Play lapas un citu lapu stili
    ========================== */
 /* Global Styles */
-body {
+html, body {
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
-  background: linear-gradient(to bottom, #fff0f5, #ffffff);
+  background: linear-gradient(to bottom, #fff0f5, #ffffff); /* Soft pink to white */
   overflow-x: hidden;
   transition: opacity 1s ease, filter 1s ease;
 }
 
-/* Deck container: fixed at the bottom and takes full width */
+/* Header with soft violet tone */
+.page-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(150, 120, 190, 0.8);
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
+  z-index: 4;
+}
+.page-header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+/* Active card container: full active question */
+.active-card-container {
+  position: fixed;
+  top: 15%; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 800px;
+  z-index: 3;
+  padding: 1rem;
+}
+
+/* Deck container: collapsed cards arranged at the bottom */
 .deck-container,
 #deck-container {
   position: fixed;
@@ -131,10 +160,10 @@ body {
   left: 0;
   right: 0;
   z-index: 2;
-  padding: 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
+  padding: 0.5rem;
 }
 
 /* Question Card Styles */
@@ -152,19 +181,21 @@ body {
   overflow: hidden;
 }
 
-/* Active card: fully expanded */
+/* Active card: full size */
 .active-card {
-  max-height: 100vh;
+  max-height: 90vh; /* Adjust so that it occupies the main view */
   opacity: 1;
+  z-index: 2;
 }
 
-/* Collapsed card: only 5mm (~20px) of its top is visible */
+/* Collapsed card: only 20px visible (approx. 5mm) */
 .collapsed-card {
   max-height: 20px;
   opacity: 0.7;
+  z-index: 1;
 }
 
-/* Fade out animation when active card is answered */
+/* Fade out animation for active card when answer is submitted */
 @keyframes cardFadeOut {
   0% {
     opacity: 1;
@@ -192,7 +223,7 @@ body {
   justify-content: center;
 }
 
-/* Large answer buttons */
+/* Answer button style */
 .card-answer-btn {
   flex: 1 1 40%;
   min-width: 150px;
