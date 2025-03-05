@@ -7,87 +7,111 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Deck container: holds all cards; positioned fixed at bottom -->
+  <!-- Fiksēts virsraksts ar maigu violetu toni -->
+  <header class="page-header">
+    <h1>Būtiskie jautājumi</h1>
+  </header>
+  
+  <!-- Aktīvā kartiņas konteiners (pilna izmērā) -->
+  <div id="active-card-container" class="active-card-container"></div>
+  
+  <!-- Deck konteiners (collapsed kartiņas uz ekrāna apakšas, redzama tikai to augšējā daļa) -->
   <div id="deck-container" class="deck-container"></div>
-  <!-- Finish container: appears when all questions are answered -->
+  
+  <!-- Finish kontainers, kas parāda “Skatīt rezultātus” pogu, kad visi jautājumi ir atbildēti -->
   <div id="finish-container" class="finish-container" style="display: none;">
     <button id="finish-btn" class="results-btn">Skatīt rezultātus</button>
   </div>
   
   <script>
-    // Get UID from URL (e.g. play.html?uid=XYZ)
+    // Iegūst uid no URL (piemēram, play.html?uid=XYZ)
     const uid = new URLSearchParams(window.location.search).get('uid') || "";
     let questions = [];
-    // activeCardIndex indicates the current (active) card (i.e. first unanswered)
+    // activeCardIndex – indekss pašreizējai (aktīvai) kartiņai.
     let activeCardIndex = 0;
     
-    // Fetch questions from Google Sheets via your Google Apps Script web app
+    // Iegūst jautājumus no Google Sheets caur Google Apps Script
     function fetchQuestions() {
       const url = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec?action=getQuestions&uid=" + uid;
       fetch(url)
         .then(response => response.json())
         .then(data => {
-          questions = data.questions; // expected: array of { row, text, answers: [...], selected }
+          questions = data.questions; // sagaidām masīvu ar objektiem { row, text, answers:[...], selected }
           renderDeck();
         })
         .catch(error => console.error("Kļūda izgūstot jautājumus:", error));
     }
     
-    // Render the deck: all cards arranged vertically.
-    // The active card is fully visible; all previous (answered) cards are collapsed to show only ~20px (5mm) of their top.
+    // Renderē aktīvo kartiņu un sakārtotas collapsed kartiņas deckā
     function renderDeck() {
-      const container = document.getElementById("deck-container");
-      container.innerHTML = "";
+      const activeContainer = document.getElementById("active-card-container");
+      const deckContainer = document.getElementById("deck-container");
+      activeContainer.innerHTML = "";
+      deckContainer.innerHTML = "";
       
-      questions.forEach((q, index) => {
-        const card = document.createElement("div");
-        card.classList.add("question-card");
-        card.dataset.index = index;
-        
-        if (index === activeCardIndex) {
-          card.classList.add("active-card");
-        } else {
-          card.classList.add("collapsed-card");
-        }
-        
-        // Card content: question text
-        const qText = document.createElement("p");
-        qText.classList.add("card-question-text");
-        qText.innerText = q.text;
-        card.appendChild(qText);
-        
-        // Answer buttons container
-        const answerContainer = document.createElement("div");
-        answerContainer.classList.add("card-answer-container");
-        q.answers.forEach(answer => {
-          const btn = document.createElement("button");
-          btn.classList.add("card-answer-btn");
-          btn.innerText = answer;
-          if(q.selected && q.selected === answer) {
-            btn.innerHTML = "❤️ " + answer;
-          }
-          btn.addEventListener("click", (e) => {
-            e.stopPropagation(); // prevent card click event
-            // Only allow selecting answer if this card is active
-            if(index === activeCardIndex) {
-              selectAnswer(index, answer, btn);
-            }
-          });
-          answerContainer.appendChild(btn);
-        });
-        card.appendChild(answerContainer);
-        
-        // Tapping on a collapsed card will expand it (make it active)
-        card.addEventListener("click", () => {
-          if(index !== activeCardIndex) {
-            activeCardIndex = index;
-            renderDeck();
-          }
-        });
-        
-        container.appendChild(card);
-      });
+      // Render active card (if exists)
+      if (activeCardIndex < questions.length) {
+        const activeCard = createCard(questions[activeCardIndex], activeCardIndex, true);
+        activeContainer.appendChild(activeCard);
+      }
+      
+      // Render collapsed cards for all answered questions (indices 0 to activeCardIndex-1)
+      for (let i = 0; i < activeCardIndex; i++) {
+        const collapsedCard = createCard(questions[i], i, false);
+        deckContainer.appendChild(collapsedCard);
+      }
+      
       checkFinish();
+    }
+    
+    // Creates a card element. isActive = true means a full active card; false means collapsed card.
+    function createCard(q, index, isActive) {
+      const card = document.createElement("div");
+      card.classList.add("question-card");
+      card.dataset.index = index;
+      
+      if (isActive) {
+        card.classList.add("active-card");
+      } else {
+        card.classList.add("collapsed-card");
+      }
+      
+      // Card question text
+      const qText = document.createElement("p");
+      qText.classList.add("card-question-text");
+      qText.innerText = q.text;
+      card.appendChild(qText);
+      
+      // Answer container
+      const answerContainer = document.createElement("div");
+      answerContainer.classList.add("card-answer-container");
+      q.answers.forEach(answer => {
+        const btn = document.createElement("button");
+        btn.classList.add("card-answer-btn");
+        btn.innerText = answer;
+        if(q.selected && q.selected === answer) {
+          btn.innerHTML = "❤️ " + answer;
+        }
+        // Allow answer selection only if the card is active
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (isActive) {
+            selectAnswer(index, answer, btn);
+          }
+        });
+        answerContainer.appendChild(btn);
+      });
+      card.appendChild(answerContainer);
+      
+      // Tapping on a collapsed card expands it
+      card.addEventListener("click", () => {
+        if (!isActive) {
+          activeCardIndex = index;
+          renderDeck();
+        }
+      });
+      
+      return card;
     }
     
     // When an answer is selected on the active card
@@ -95,9 +119,9 @@
       const q = questions[cardIndex];
       q.selected = selectedAnswer;
       
-      // Update UI for the active card – mark selected answer with heart emoji
-      const activeCard = document.querySelector(".active-card");
-      if(activeCard) {
+      // Update UI in active card: mark the selected answer with a heart emoji
+      const activeCard = document.querySelector("#active-card-container .question-card");
+      if (activeCard) {
         const btns = activeCard.querySelectorAll(".card-answer-btn");
         btns.forEach(btn => btn.innerHTML = btn.innerText);
         buttonElem.innerHTML = "❤️ " + selectedAnswer;
@@ -105,18 +129,18 @@
       
       updateAnswer(q.row, selectedAnswer);
       
-      // Animate active card fade out using a fade effect
+      // Animate active card fade out with a fade effect
       activeCard.classList.add("card-fade-out");
       setTimeout(() => {
-        // After animation, the active card is considered answered and collapses.
-        if(activeCardIndex < questions.length - 1) {
+        // After animation, the answered card is collapsed into the deck, and the next card becomes active
+        if (activeCardIndex < questions.length - 1) {
           activeCardIndex++;
         }
         renderDeck();
       }, 1000);
     }
     
-    // Send POST request (using no-cors mode as before) to update the answer in Google Sheets.
+    // Sends a POST request to update the answer in Google Sheets (using mode "no-cors")
     function updateAnswer(row, answer) {
       const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec";
       const data = { action: "updateAnswer", uid: uid, row: row, answer: answer };
