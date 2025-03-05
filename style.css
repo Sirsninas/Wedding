@@ -123,13 +123,13 @@ html, body {
   transition: opacity 1s ease, filter 1s ease;
 }
 
-/* Header (if needed) */
+/* Page Header */
 .page-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(150, 120, 190, 0.8);
+  background: rgba(150,120,190,0.8);
   color: #fff;
   text-align: center;
   padding: 1rem;
@@ -140,70 +140,55 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container: full active question */
-.active-card-container {
-  position: fixed;
-  top: 15%; /* Adjust as needed */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
+/* Cards container: relative positioning so that answered cards can be absolutely positioned */
+.cards-container {
+  position: relative;
+  width: 100%;
   max-width: 800px;
-  z-index: 3;
+  margin: 80px auto 0; /* Leaves space for header */
   padding: 1rem;
-}
-
-/* Deck Container: holds collapsed cards at the bottom */
-.deck-container,
-#deck-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.5rem;
 }
 
 /* Question Card Styles */
 .question-card {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255,255,255,0.2);
   backdrop-filter: blur(10px);
   border-radius: 1rem;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2);
   margin: 0 auto;
   padding: 1.5rem;
-  transition: max-height 0.5s ease, opacity 0.5s ease;
+  transition: opacity 0.5s ease;
   cursor: pointer;
   width: 100%;
   max-width: 800px;
   overflow: hidden;
-  position: relative;
 }
 
-/* Active card: full size */
+/* Active card: displayed normally in document flow */
 .active-card {
-  max-height: 90vh; /* occupies most of the view */
+  position: relative;
   opacity: 1;
   z-index: 2;
 }
 
-/* Collapsed card: only 20px (approx. 5mm) of its top edge visible */
-.collapsed-card {
-  max-height: 20px;
+/* Answered (collapsed) card: absolutely positioned on top of the active card,
+   so that only ~20px (approx. 5mm) of its top edge is visible; also shifted to the right */
+.answered-card {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 800px;
+  height: 20px;
   opacity: 0.7;
   z-index: 1;
+  overflow: hidden;
 }
 
-/* Fade out animation for active card when answered */
+/* Fade out animation for active card when an answer is submitted */
 @keyframes cardFadeOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+  0% { opacity: 1; }
+  100% { opacity: 0; }
 }
 .card-fade-out {
   animation: cardFadeOut 1s forwards;
@@ -232,13 +217,13 @@ html, body {
   font-size: 1.25rem;
   border: none;
   border-radius: 0.625rem;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255,255,255,0.4);
   transition: transform 0.3s ease, background 0.3s ease;
   cursor: pointer;
 }
 .card-answer-btn:hover {
   transform: translateY(-0.5rem);
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255,255,255,0.7);
 }
 
 /* Results button style */
