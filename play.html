@@ -21,24 +21,23 @@
     let questions = [];
     let activeCardIndex = 0;
     
-    // Izgūst jautājumus no Google Sheets
+    // Izgūst jautājumus no Google Sheets, izmantojot jūsu Google Apps Script web app endpoint
     function fetchQuestions() {
       const url = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7T1ojVoCF43P1RgQ/exec?action=getQuestions&uid=" + uid;
       fetch(url)
         .then(response => response.json())
         .then(data => {
-          questions = data.questions; // sagaidām: [{ row, text, answers:[...], selected }, ... ]
+          questions = data.questions; // sagaidām struktūru: [{ row, text, answers:[...], selected }, ... ]
           renderCards();
         })
         .catch(error => console.error("Error fetching questions:", error));
     }
     
-    // Renderē visas kartiņas – aktīvā kartiņa ir pilna, pārējās redzamas kā peek (to augšgals)
+    // Renderē visas kartiņas – aktīvā kartiņa ir pilna, pārējās redzamas kā peek (tikai to augšējā daļa)
     function renderCards() {
       const container = document.getElementById("cards-container");
       container.innerHTML = "";
       questions.forEach((q, index) => {
-        // Katru jautājumu renderē kā kartiņu
         const card = document.createElement("div");
         card.classList.add("question-card");
         card.dataset.index = index;
@@ -48,33 +47,34 @@
           card.classList.add("inactive-card");
         }
         
-        // Kartiņas satur: jautājuma tekst (lielā fontā) un atbilžu pogas
+        // Kartiņas saturā – jautājuma teksts
         const qText = document.createElement("p");
         qText.classList.add("card-question-text");
         qText.innerText = q.text;
         card.appendChild(qText);
         
+        // Atbilžu pogu konteiners
         const answerContainer = document.createElement("div");
         answerContainer.classList.add("card-answer-container");
         q.answers.forEach(answer => {
           const btn = document.createElement("button");
           btn.classList.add("card-answer-btn");
           btn.innerText = answer;
-          // Ja atbilde jau saglabāta, pievieno sirds emoji
-          if (q.selected && q.selected === answer) {
+          // Ja kartiņai jau ir saglabāta atbilde, iezīmē to ar "❤️"
+          if(q.selected && q.selected === answer) {
             btn.innerHTML = "❤️ " + answer;
           }
           btn.addEventListener("click", (e) => {
-            e.stopPropagation(); // neizsauc kartiņas klikšķa handleri
+            e.stopPropagation(); // Lai kartiņas klikšķi netiktu izsaukti
             selectAnswer(index, answer, btn);
           });
           answerContainer.appendChild(btn);
         });
         card.appendChild(answerContainer);
         
-        // Ja klikšķina uz neaktīvās kartiņas, to aktivizē (pačeļ uz augšu)
+        // Klikšķis uz neaktīvās kartiņas – aktivizē to
         card.addEventListener("click", () => {
-          if (index !== activeCardIndex) {
+          if (activeCardIndex !== index) {
             activeCardIndex = index;
             renderCards();
           }
@@ -85,12 +85,12 @@
       checkFinish();
     }
     
-    // Kad tiek izvēlēta atbilde
+    // Kad tiek izvēlēta atbilde kartiņā
     function selectAnswer(cardIndex, selectedAnswer, buttonElem) {
       const q = questions[cardIndex];
       q.selected = selectedAnswer;
       
-      // Atjaunina UI – visiem pogām no attiecīgās kartiņas noņem marķējumu, izvēlētajai pievieno "❤️"
+      // Atjauno UI – atzīmē izvēlēto pogu ar "❤️"
       const card = document.querySelector(`.question-card[data-index='${cardIndex}']`);
       const btns = card.querySelectorAll(".card-answer-btn");
       btns.forEach(btn => btn.innerHTML = btn.innerText);
@@ -107,7 +107,7 @@
       }, 1000);
     }
     
-    // Nosūta POST pieprasījumu uz Google Sheets bez no-cors (atgriežoties pie noklusētā režīma)
+    // Nosūta POST pieprasījumu uz Google Sheets bez "no-cors" režīma
     function updateAnswer(row, answer) {
       const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7T1ojVoCF43P1RgQ/exec";
       const data = { action: "updateAnswer", uid: uid, row: row, answer: answer };
@@ -125,11 +125,7 @@
     function checkFinish() {
       const allAnswered = questions.every(q => q.selected && q.selected !== "");
       const finishContainer = document.getElementById("finish-container");
-      if (allAnswered) {
-        finishContainer.style.display = "block";
-      } else {
-        finishContainer.style.display = "none";
-      }
+      finishContainer.style.display = allAnswered ? "block" : "none";
     }
     
     // Finish pogas klikšķis
