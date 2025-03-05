@@ -140,10 +140,10 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container */
+/* Active Card Container: positioned below header and centered */
 .active-card-container {
   position: fixed;
-  top: 15%; /* Below header */
+  top: 15%; /* Adjust as needed */
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -152,7 +152,7 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container: fixed at bottom, horizontal scrolling if needed */
+/* Deck Container for Deck Cards: fixed at bottom, horizontal scrolling if needed */
 .deck-container,
 #deck-container {
   position: fixed;
@@ -188,12 +188,13 @@ html, body {
   z-index: 2;
 }
 
-/* Deck card: answered cards in the deck (70% size relative to active card) */
+/* Deck card: for answered cards in the deck.
+   They are scaled to 70% of the active card’s width and only 20px high (≈5mm) by default. */
 .deck-card {
   width: 70%;
   max-width: 560px; /* 70% of 800px */
   margin: 0 auto;
-  max-height: 20px;  /* About 5mm visible by default */
+  max-height: 20px;  /* About 5mm visible */
   opacity: 0.7;
   z-index: 1;
   position: relative;
@@ -201,14 +202,15 @@ html, body {
   transition: max-height 0.3s ease, transform 0.3s ease;
 }
 
-/* When deck card is hovered or touched, it lifts by 100px and scales slightly */
+/* On hover/touch, deck card lifts by 100px and scales slightly (cylindrical effect) */
 .deck-card:hover,
 .deck-card-lift {
-  max-height: 120px;
+  max-height: 120px; /* Adjust to reveal more text */
   transform: translateY(-100px) scaleY(1.05);
 }
 
-/* Slide down-out animation for active card when an answer is selected */
+/* Slide down-out animation for active card when an answer is selected:
+   the card fades and slides down off-screen */
 @keyframes cardSlideDownOut {
   0% {
     opacity: 1;
