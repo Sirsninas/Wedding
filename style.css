@@ -1,42 +1,48 @@
-/* Globalie stili ar mīkstiem pasteltoņiem */
+/* Globalie stili – maigi rozā, kas pāriet uz ļoti maigu zilu toni */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
-  background: linear-gradient(to right, #fff0f5, #ffe4e1);
+  background: linear-gradient(to bottom, #fff0f5, #e0f7fa);
   overflow-x: hidden;
   transition: opacity 1s ease, filter 1s ease;
 }
 
-/* Mākonis dissolves efekts */
+/* "Mākonis" efektam, kas aktivizējas pārejas brīdī */
 .cloud-dissolve {
   opacity: 0;
   filter: blur(8px);
 }
 
-/* Iepazīšanās lapas konteineris */
-.intro-container {
+/* Saturamā daļa (virsraksts un teksts) */
+.content-container {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 40px 20px;
+  padding: 20px;
 }
 
 .intro-title {
-  color: #d17c9c; /* Mīksta rozā/rožu krāsa */
-  font-size: 2.5em;
+  font-size: 2.8em;
   margin-bottom: 10px;
+  color: #d17c9c;  /* Maigs rozā */
 }
 
 .intro-text {
-  font-size: 1.2em;
+  font-size: 1.3em;
   color: #555;
 }
 
-/* Pogu konteineris */
-.button-container {
+/* Apakšas sirds pogu konteineris */
+.hearts-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  justify-content: center;
-  gap: 50px;
-  margin-top: 50px;
+  gap: 40px;
 }
 
 /* Emoji pogu stils */
@@ -62,7 +68,7 @@ body {
   text-shadow: 1px 1px 3px #000;
 }
 
-/* Emoji saturs */
+/* Palielināts emoji izmērs */
 .emoji-content {
   font-size: 5em;
 }
