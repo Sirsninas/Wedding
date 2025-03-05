@@ -129,7 +129,7 @@ html, body {
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(150,120,190,0.8);
+  background: rgba(150, 120, 190, 0.8);
   color: #fff;
   text-align: center;
   padding: 1rem;
@@ -143,7 +143,7 @@ html, body {
 /* Active Card Container */
 .active-card-container {
   position: fixed;
-  top: 15%; /* Below header */
+  top: 15%;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -162,7 +162,7 @@ html, body {
   height: 40vh; /* 40% of viewport height */
   z-index: 2;
   display: flex;
-  gap: 0;
+  gap: 0.25rem;
   padding: 0.5rem;
   overflow-x: auto;
   overflow-y: hidden;
@@ -171,10 +171,10 @@ html, body {
 
 /* Question Card */
 .question-card {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 1rem;
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
   margin: 0 auto;
   padding: 1.5rem;
   transition: opacity 0.5s ease, transform 0.5s ease;
@@ -192,12 +192,13 @@ html, body {
   z-index: 2;
 }
 
-/* Deck card: for answered cards in the deck. 
-   They are scaled to 70% of active card size and overlap by default (using negative margin) */
+/* Deck card: for answered questions in the deck.
+   They are scaled to 70% of active card size. */
 .deck-card {
   width: 70%;
   max-width: 560px; /* 70% of 800px */
-  margin-right: -40px; /* Overlap: adjust this value for stacking */
+  margin: 0 auto;
+  max-height: 20px; /* About 5mm visible by default */
   opacity: 0.7;
   z-index: 1;
   position: relative;
@@ -210,13 +211,12 @@ html, body {
 .expanded-deck-card {
   width: 80%;
   max-width: 640px;
-  margin-right: 10px;
   max-height: 120px;
   transform: perspective(1000px) rotateY(10deg);
   font-size: 1.2rem;
 }
 
-/* Slide down-out animation for active card when answered */
+/* Slide down-out animation for active card when an answer is selected */
 @keyframes cardSlideDownOut {
   0% {
     opacity: 1;
@@ -254,13 +254,13 @@ html, body {
   font-size: 1.25rem;
   border: none;
   border-radius: 0.625rem;
-  background: rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.4);
   transition: transform 0.3s ease, background 0.3s ease;
   cursor: pointer;
 }
 .card-answer-btn:hover {
   transform: translateY(-0.5rem);
-  background: rgba(255,255,255,0.7);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 /* Results button */
