@@ -1,101 +1,21 @@
-/* Globalie stili – mīksti rozā, kas pakāpeniski pāriet uz ļoti maigu zilu */
+/* Globalie stili */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
-  background: linear-gradient(to bottom, #fff0f5, #e0f7fa);
+  /* Maigs fons – no maiga rozā (augšā) līdz baltam (apakšā) */
+  background: linear-gradient(to bottom, #fff0f5, #ffffff);
   overflow-x: hidden;
   transition: opacity 1s ease, filter 1s ease;
 }
 
-/* "Mākonis" efekts pārejai */
+/* "Mākonis" pārejas efekts – kad lapa izgaist pirms pāradresācijas */
 .cloud-dissolve {
   opacity: 0;
   filter: blur(8px);
 }
 
-/* Saturamā daļa: virsraksts un teksts */
-.content-container {
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 20px;
-}
-
-.intro-title {
-  font-size: 2.8em;
-  margin-bottom: 10px;
-  color: #d17c9c; /* Maigs rozā */
-}
-
-.intro-text {
-  font-size: 1.3em;
-  color: #555;
-}
-
-/* Apakšas sirds pogu konteineris */
-.hearts-container {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 40px;
-}
-
-/* Emoji pogu stils */
-.emoji-button {
-  width: 150px;
-  height: 150px;
-  cursor: pointer;
-  text-align: center;
-  position: relative;
-  transition: transform 0.3s;
-}
-
-.emoji-button:hover {
-  transform: translateY(-10px);
-}
-
-.button-label {
-  position: absolute;
-  bottom: -30px;
-  width: 100%;
-  font-size: 1.5em;
-  color: #fff;
-  text-shadow: 1px 1px 3px #000;
-}
-
-/* Emoji saturs – palielināts izmērs */
-.emoji-content {
-  font-size: 5em;
-}
-
-/* "JĀ" emoji animācija: pulsē un rotā ap Z asi */
-.ja-emoji {
-  animation: pulseRotate 3s linear infinite;
-}
-
-@keyframes pulseRotate {
-  0%   { transform: scale(1) rotateZ(0deg); }
-  50%  { transform: scale(1.1) rotateZ(180deg); }
-  100% { transform: scale(1) rotateZ(360deg); }
-}
-
-/* "NĒ" emoji sākotnējais stils (bez animācijas) */
-.ne-emoji {
-  transition: transform 1s ease, opacity 1s ease;
-}
-
-/* Kad "NĒ" emoji tiek "sasaplokāta" – tikai augstums samazinās, platums paliek nemainīgs */
-.ne-emoji.collapsed {
-  transform: scaleY(0.3);
-  opacity: 0.5;
-}
-
+/* Konteiners, kas aptver visu saturu play lapā */
 .container {
   max-width: 600px;
   margin: 40px auto;
@@ -103,11 +23,14 @@ body {
   text-align: center;
 }
 
+/* Lapas virsraksts */
 .title {
   color: #b8336a;
   font-size: 2em;
+  margin-bottom: 20px;
 }
 
+/* Glassmorphism efekts jautājuma lodziņiem */
 .glass {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
@@ -118,11 +41,13 @@ body {
   transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
+/* Jautājuma teksts */
 #question-text {
   font-size: 1.5em;
   margin-bottom: 20px;
 }
 
+/* Atbilžu pogu stils */
 .answer-btn {
   display: block;
   width: 80%;
@@ -141,6 +66,7 @@ body {
   background: rgba(255, 255, 255, 0.6);
 }
 
+/* Animācija – jautājuma lodziņš paceļas un izgaist kā mākonis */
 @keyframes riseAndDissolve {
   0% {
     transform: translateY(0);
@@ -157,6 +83,7 @@ body {
   animation: riseAndDissolve 1s forwards;
 }
 
+/* Animācija – nākamais jautājums parādās no "mākona" */
 @keyframes appearFromCloud {
   0% {
     transform: translateY(150px);
@@ -173,6 +100,7 @@ body {
   animation: appearFromCloud 1s forwards;
 }
 
+/* Rezultātu pogas stils (ja pēdējā jautājuma beigās tiek parādīta) */
 .results-btn {
   display: block;
   width: 80%;
@@ -186,7 +114,6 @@ body {
   cursor: pointer;
   transition: background 0.3s;
 }
-
 .results-btn:hover {
   background: #b8336a;
 }
