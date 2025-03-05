@@ -140,58 +140,84 @@ html, body {
   font-size: 2rem;
 }
 
-/* Cards container: relative positioning so that answered cards can be absolutely positioned */
-.cards-container {
-  position: relative;
-  width: 100%;
+/* Active Card Container */
+.active-card-container {
+  position: fixed;
+  top: 15%; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
   max-width: 800px;
-  margin: 80px auto 0; /* Leaves space for header */
+  z-index: 3;
   padding: 1rem;
+}
+
+/* Deck Container for collapsed cards */
+.deck-container,
+#deck-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem;
+}
+
+/* When deck is sliding up to expand a collapsed card */
+.deck-slide-up {
+  transition: transform 0.5s ease;
+  transform: translateY(-10%);
 }
 
 /* Question Card Styles */
 .question-card {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 1rem;
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
   margin: 0 auto;
   padding: 1.5rem;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
   cursor: pointer;
   width: 100%;
   max-width: 800px;
   overflow: hidden;
+  position: relative;
 }
 
-/* Active card: displayed normally in document flow */
+/* Active card: full size */
 .active-card {
-  position: relative;
   opacity: 1;
   z-index: 2;
 }
 
-/* Answered (collapsed) card: absolutely positioned on top of the active card,
-   so that only ~20px (approx. 5mm) of its top edge is visible; also shifted to the right */
-.answered-card {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  max-width: 800px;
-  height: 20px;
+/* Collapsed card: only about 20px visible (approx. 5mm) */
+.collapsed-card, .answered-card {
   opacity: 0.7;
   z-index: 1;
-  overflow: hidden;
+  max-height: 20px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
-/* Fade out animation for active card when an answer is submitted */
-@keyframes cardFadeOut {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+/* Slide down animation for active card when an answer is selected */
+@keyframes cardSlideDown {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateY(150px);
+  }
 }
-.card-fade-out {
-  animation: cardFadeOut 1s forwards;
+.card-slide-down {
+  animation: cardSlideDown 1s forwards;
 }
 
 /* Card question text */
@@ -217,13 +243,13 @@ html, body {
   font-size: 1.25rem;
   border: none;
   border-radius: 0.625rem;
-  background: rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.4);
   transition: transform 0.3s ease, background 0.3s ease;
   cursor: pointer;
 }
 .card-answer-btn:hover {
   transform: translateY(-0.5rem);
-  background: rgba(255,255,255,0.7);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 /* Results button style */
