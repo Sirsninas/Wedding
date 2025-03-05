@@ -113,7 +113,7 @@ body {
 /* ==========================
    Play lapas un citu lapu stili
    ========================== */
-/* Globalie stili – fona gradienta pāreja no mīksta rozā līdz baltam */
+/* Global fona un pārejas stili kopā ar citiem */
 body {
   margin: 0;
   padding: 0;
@@ -122,45 +122,46 @@ body {
   overflow-x: hidden;
   transition: opacity 1s ease, filter 1s ease;
 }
-
-/* "Mākonis" pārejas efekts, ko var izmantot arī citu lapu pārejai */
 .cloud-dissolve {
   opacity: 0;
   filter: blur(8px);
 }
 
-/* Kontainers, kur atrodas visi jautājumu kartiņas */
+/* Konteiners, kur atrodas visas kartiņas */
 .cards-container {
   max-width: 800px;
   margin: 40px auto;
   padding: 20px;
+  position: relative;
 }
 
-/* Kartiņas stils */
+/* Jautājumu kartiņas – "Apple Wallet" stilā */
 .question-card {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   margin-bottom: 20px;
   padding: 30px;
   transition: transform 0.5s ease, opacity 0.5s ease;
   cursor: pointer;
 }
 
-/* Aktīvā kartiņa – pilna izmēra, vieglāka, lai koncentrētos uz to */
+/* Aktīvā kartiņa: pilna izmēra un centrēta */
 .active-card {
-  transform: scale(1);
+  transform: translateY(0);
   opacity: 1;
+  z-index: 2;
 }
 
-/* Neaktīvās kartiņas – minimizētas un nedaudz izbalinātas */
+/* Neaktīvās kartiņas: mazākas, parādās zemāk – tikai to augšējā daļa ir redzama */
 .inactive-card {
-  transform: scale(0.9);
+  transform: translateY(50px);
   opacity: 0.7;
+  z-index: 1;
 }
 
-/* Kartiņas fade out animācija – kad tiek atbildēts */
+/* Animācija – aktīvā kartiņa fade out uz augšu */
 @keyframes cardFadeOutUp {
   0% {
     opacity: 1;
@@ -175,21 +176,6 @@ body {
   animation: cardFadeOutUp 1s forwards;
 }
 
-/* Kartiņas fade in animācija – ja aktīvā kartiņa tiek mainīta */
-@keyframes cardFadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(150px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.fade-in {
-  animation: cardFadeInUp 1s forwards;
-}
-
 /* Kartiņas jautājuma teksts */
 .card-question-text {
   font-size: 2em;
@@ -197,7 +183,7 @@ body {
   color: #333;
 }
 
-/* Atbilžu pogu konteiners iekārtots kartiņā */
+/* Atbilžu pogu konteiners kartiņā */
 .card-answer-container {
   display: flex;
   flex-wrap: wrap;
@@ -205,7 +191,7 @@ body {
   justify-content: center;
 }
 
-/* Atbilžu pogas stils kartiņām – lielas pogas */
+/* Atbilžu pogu stils – lieli un skaidri */
 .card-answer-btn {
   flex: 1 1 40%;
   min-width: 150px;
@@ -245,7 +231,6 @@ body {
   text-align: center;
   margin: 30px auto;
 }
-
 
 /* ==========================
    Sad lapas (vai citu vienkāršu lapu) stili
