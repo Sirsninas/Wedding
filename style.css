@@ -113,7 +113,7 @@ body {
 /* ==========================
    Play lapas un citu lapu stili
    ========================== */
-/* Global fona un pārejas stili kopā ar citiem */
+/* Global fona gradienta pāreja no mīksta rozā līdz baltam */
 body {
   margin: 0;
   padding: 0;
@@ -127,7 +127,7 @@ body {
   filter: blur(8px);
 }
 
-/* Konteiners, kur atrodas visas kartiņas */
+/* Kontainers, kur atrodas kartiņas */
 .cards-container {
   max-width: 800px;
   margin: 40px auto;
@@ -135,7 +135,7 @@ body {
   position: relative;
 }
 
-/* Jautājumu kartiņas – "Apple Wallet" stilā */
+/* Jautājumu kartiņas – Apple Wallet stilā */
 .question-card {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
@@ -146,15 +146,11 @@ body {
   transition: transform 0.5s ease, opacity 0.5s ease;
   cursor: pointer;
 }
-
-/* Aktīvā kartiņa: pilna izmēra un centrēta */
 .active-card {
   transform: translateY(0);
   opacity: 1;
   z-index: 2;
 }
-
-/* Neaktīvās kartiņas: mazākas, parādās zemāk – tikai to augšējā daļa ir redzama */
 .inactive-card {
   transform: translateY(50px);
   opacity: 0.7;
@@ -191,7 +187,7 @@ body {
   justify-content: center;
 }
 
-/* Atbilžu pogu stils – lieli un skaidri */
+/* Atbilžu pogu stils kartiņām – lieli, skaidri */
 .card-answer-btn {
   flex: 1 1 40%;
   min-width: 150px;
