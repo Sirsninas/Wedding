@@ -127,37 +127,52 @@ body {
   filter: blur(8px);
 }
 
-/* Konteiners, kur atrodas visas kartiņas */
-.cards-container {
+/* Konteiners, kur atrodas kartiņas */
+.cards-container,
+#cards-container {
   max-width: 800px;
   margin: 40px auto;
   padding: 20px;
   position: relative;
 }
 
-/* Jautājumu kartiņas – stilizētas kā Apple Wallet kartiņas */
+/* Jautājumu kartiņas – Apple Wallet stilā */
 .question-card {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  margin-bottom: 20px;
+  margin: 10px auto;
   padding: 30px;
   transition: transform 0.5s ease, opacity 0.5s ease;
   cursor: pointer;
+  width: 100%;
+  position: relative;
 }
+
+/* Aktīvā kartiņa pilnībā redzama */
 .active-card {
   transform: translateY(0);
   opacity: 1;
   z-index: 2;
 }
-.inactive-card {
-  transform: translateY(50px);
+
+/* Neaktīvās kartiņas – saglabā tikai augšējo daļu redzamu (piemēram, 50px augstu) */
+.collapsed-card {
+  transform: translateY( calc(100% - 50px) );
   opacity: 0.7;
   z-index: 1;
 }
 
-/* Fade out animācija – aktīvā kartiņa izgaist uz augšu */
+/* Ja deck ir paplašināts (expanded), visas kartiņas redzamas pilnībā ar atstarpi */
+.expanded-card {
+  margin-bottom: 20px;
+  transform: translateY(0);
+  opacity: 1;
+  z-index: 1;
+}
+
+/* Animācija – aktīvā kartiņa fade out uz augšu */
 @keyframes cardFadeOutUp {
   0% {
     opacity: 1;
