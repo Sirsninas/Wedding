@@ -118,12 +118,13 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
-  background: linear-gradient(to bottom, #fff0f5, #ffffff); /* Soft pink to white */
+  /* Background: soft pink to white covering full viewport */
+  background: linear-gradient(to bottom, #fff0f5, #ffffff);
   overflow-x: hidden;
   transition: opacity 1s ease, filter 1s ease;
 }
 
-/* Page Header */
+/* Page Header: fixed at top, separated from content */
 .page-header {
   position: fixed;
   top: 0;
@@ -140,10 +141,10 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container */
+/* Active Card Container: below header, centered, not full screen width */
 .active-card-container {
   position: fixed;
-  top: 15%; /* Below header */
+  top: 15%;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -152,7 +153,7 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container for Collapsed Cards */
+/* Deck Container: fixed at bottom, holds collapsed cards */
 .deck-container,
 #deck-container {
   position: fixed;
@@ -182,13 +183,13 @@ html, body {
   position: relative;
 }
 
-/* Active card: fully visible */
+/* Active card: full view */
 .active-card {
   opacity: 1;
   z-index: 2;
 }
 
-/* Collapsed (answered) card: only about 20px visible */
+/* Collapsed (answered) card: only about 20px visible (approx. 5mm) */
 .collapsed-card,
 .answered-card {
   max-height: 20px;
@@ -202,14 +203,15 @@ html, body {
   transition: max-height 0.3s ease, transform 0.3s ease;
 }
 
-/* When hovering on a collapsed card, lift it slightly to reveal more text */
-.collapsed-card:hover {
-  max-height: 50px;
-  transform: translateY(-10px);
+/* Hover effect on collapsed card: lift it by 100px (revealing text) */
+.collapsed-card:hover,
+.collapsed-card-lift {
+  max-height: 120px; /* adjust as needed to reveal text */
+  transform: translateY(-100px);
 }
 
-/* Slide down-out animation for active card when an answer is submitted.
-   The card fades and slides down completely (covering the full container height). */
+/* Slide down-out animation for active card when answer is selected.
+   It slides down off-screen with a fade effect. */
 @keyframes cardSlideDownOut {
   0% {
     opacity: 1;
