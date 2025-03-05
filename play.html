@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Romantiskā Aptauja – Kartiņas</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="play.css">
 </head>
 <body>
   <!-- Fixed header -->
@@ -12,19 +12,13 @@
     <h1>Būtiskie jautājumi</h1>
   </header>
   
-  <!-- Active card container: shows current active (unanswered) question -->
+  <!-- Active card container: shows the current (unanswered) question -->
   <div id="active-card-container" class="active-card-container"></div>
   
-  <!-- Deck container: shows answered cards -->
-  <!-- By default, deck mode is "stacked" (cards overlap vertically so that only a 20px strip is visible) -->
+  <!-- Deck container: horizontal scroll area for answered cards -->
   <div id="deck-container" class="deck-container"></div>
   
-  <!-- A toggle button to switch deck mode (stacked vs. expanded) -->
-  <div id="deck-toggle" class="deck-toggle">
-    <button id="toggle-btn">Skatīt visu</button>
-  </div>
-  
-  <!-- Finish container: when all questions are answered -->
+  <!-- Finish container: appears when all questions are answered -->
   <div id="finish-container" class="finish-container" style="display: none;">
     <button id="finish-btn" class="results-btn">Skatīt rezultātus</button>
   </div>
@@ -33,25 +27,26 @@
   (function(){
     const uid = new URLSearchParams(window.location.search).get('uid') || "";
     let questions = [];
-    let activeCardIndex = 0; // index of first unanswered (active) question
-    // deckExpanded toggles between stacked mode (false) and expanded horizontal mode (true)
-    let deckExpanded = false;
-    
-    // Fetch questions from Google Sheets via your Apps Script web app
+    let activeCardIndex = 0; // index of first unanswered (active) card
+    // liftedDeckCards tracks the indices of deck cards currently "lifted"
+    let liftedDeckCards = new Set();
+
+    // Fetch questions from the web app
     function fetchQuestions() {
       const url = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec?action=getQuestions&uid=" + uid;
       fetch(url)
         .then(response => response.json())
         .then(data => {
           questions = data.questions;
+          // Set activeCardIndex to first unanswered; if all answered, use last.
           let idx = questions.findIndex(q => !q.selected || q.selected === "");
           activeCardIndex = (idx === -1) ? questions.length - 1 : idx;
           renderDeck();
         })
-        .catch(error => console.error("Kļūda izgūstot jautājumus:", error));
+        .catch(error => console.error("Error fetching questions:", error));
     }
-    
-    // Render the active card and the deck.
+
+    // Render the active card and deck.
     function renderDeck() {
       const activeContainer = document.getElementById("active-card-container");
       const deckContainer = document.getElementById("deck-container");
@@ -67,32 +62,18 @@
       // Render deck cards for answered questions (indices 0 to activeCardIndex-1)
       for (let i = 0; i < activeCardIndex; i++) {
         const deckCard = createCard(questions[i], i, false);
-        // In stacked mode, position cards so only 20px is visible on left;
-        // in expanded mode, arrange them horizontally.
-        if (!deckExpanded) {
-          deckCard.style.position = "absolute";
-          deckCard.style.left = (10 * i) + "px"; // each card offset by 10px horizontally
-          deckCard.style.bottom = "0";
-          deckCard.style.maxHeight = "20px";
-        } else {
-          deckCard.style.position = "relative";
-          deckCard.style.maxHeight = "none";
-        }
+        // Set deck card size to 70% of active card (via CSS class)
+        deckCard.classList.add("deck-size");
+        // In deck (stacked) mode, they are arranged in a horizontal row.
+        deckCard.style.marginRight = "10px";
         deckContainer.appendChild(deckCard);
-      }
-      
-      // Adjust deck container style if expanded
-      if (deckExpanded) {
-        deckContainer.style.flexDirection = "row";
-      } else {
-        deckContainer.style.flexDirection = "column";
       }
       
       checkFinish();
     }
-    
+
     // Create a card element.
-    // isActive true: active card; false: deck card.
+    // isActive true → active card; false → deck card.
     function createCard(q, index, isActive) {
       const card = document.createElement("div");
       card.classList.add("question-card");
@@ -104,12 +85,12 @@
         card.classList.add("deck-card");
       }
       
-      // Card question text (reduce font slightly for deck cards)
+      // Card question text (reduce font size for deck cards)
       const qText = document.createElement("p");
       qText.classList.add("card-question-text");
       qText.innerText = q.text;
       if (!isActive) {
-        qText.style.fontSize = "1.4rem";  // deck cards: 1.4rem vs. active: 1.5rem
+        qText.style.fontSize = "1.4rem"; // 1.4rem vs. 1.5rem for active
       }
       card.appendChild(qText);
       
@@ -120,10 +101,9 @@
         const btn = document.createElement("button");
         btn.classList.add("card-answer-btn");
         btn.innerText = answer;
-        if (q.selected && q.selected === answer) {
+        if(q.selected && q.selected === answer) {
           btn.innerHTML = "❤️ " + answer;
         }
-        // Only active card allows answer selection.
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
           if (isActive) {
@@ -134,8 +114,8 @@
       });
       card.appendChild(answerContainer);
       
-      // For deck cards in stacked mode, add hover/touch events to lift them slightly.
-      if (!isActive && !deckExpanded) {
+      // For deck cards: add passive touch and mouse events to lift them without activation
+      if (!isActive) {
         card.addEventListener("mouseenter", () => {
           card.classList.add("deck-card-lift");
         });
@@ -147,32 +127,36 @@
         }, { passive: true });
         card.addEventListener("touchend", () => {
           card.classList.remove("deck-card-lift");
-          // Do not automatically activate here; require a separate click in expanded mode.
-        }, { passive: true });
-      }
-      
-      // In expanded mode (deckExpanded==true), clicking on a deck card activates it
-      if (!isActive && deckExpanded) {
-        card.addEventListener("click", () => {
-          activeCardIndex = index;
-          renderDeck();
-        });
-      }
-      
-      // Additionally, if a deck card is clicked twice in stacked mode, then activate it.
-      if (!isActive && !deckExpanded) {
-        card.addEventListener("click", () => {
-          if (card.classList.contains("deck-card-lift")) {
+          // Only if the card is already lifted and tapped again will it activate:
+          if (card.classList.contains("deck-card-lift-active")) {
             activeCardIndex = index;
             renderDeck();
+          } else {
+            // Mark that a tap occurred while lifted (simulate a "double-tap" requirement)
+            card.classList.add("deck-card-lift-active");
+            setTimeout(() => {
+              card.classList.remove("deck-card-lift-active");
+            }, 300);
+          }
+        }, { passive: true });
+        // For desktop: require double-click (or two clicks) while lifted
+        card.addEventListener("click", () => {
+          if (card.classList.contains("deck-card-lift-active")) {
+            activeCardIndex = index;
+            renderDeck();
+          } else {
+            card.classList.add("deck-card-lift-active");
+            setTimeout(() => {
+              card.classList.remove("deck-card-lift-active");
+            }, 300);
           }
         });
       }
       
       return card;
     }
-    
-    // When an answer is selected on the active card.
+
+    // When an answer is selected on the active card:
     function selectAnswer(cardIndex, selectedAnswer, buttonElem) {
       const q = questions[cardIndex];
       q.selected = selectedAnswer;
@@ -187,7 +171,7 @@
       
       updateAnswer(q.row, selectedAnswer);
       
-      // Animate active card: fade out and slide down into the deck.
+      // Animate the active card: fade out and slide down into the deck while next active card fades in.
       activeCard.classList.add("card-slide-down-out");
       setTimeout(() => {
         if (activeCardIndex < questions.length - 1) {
@@ -196,7 +180,7 @@
         renderDeck();
       }, 1000);
     }
-    
+
     // Sends a POST request to update the answer in Google Sheets (using no-cors)
     function updateAnswer(row, answer) {
       const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec";
@@ -210,24 +194,19 @@
       .then(() => console.log("Atbilde ierakstīta rindā " + row))
       .catch(error => console.error("Kļūda ierakstot atbildi:", error));
     }
-    
-    // Check if all questions are answered; if so, show the finish button.
+
+    // Show finish button if all questions are answered.
     function checkFinish() {
       const allAnswered = questions.every(q => q.selected && q.selected !== "");
       const finishContainer = document.getElementById("finish-container");
       finishContainer.style.display = allAnswered ? "block" : "none";
     }
     
-    // Toggle deck mode when clicking the deck toggle button.
-    document.getElementById("toggle-btn").addEventListener("click", () => {
-      deckExpanded = !deckExpanded;
-      renderDeck();
-    });
-    
     document.getElementById("finish-btn").addEventListener("click", () => {
       window.location.href = "results.html" + (uid ? ("?uid=" + uid) : "");
     });
     
+    // No toggle button; deck remains in stacked mode by default.
     fetchQuestions();
   })();
   </script>
