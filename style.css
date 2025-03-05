@@ -129,7 +129,7 @@ html, body {
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(150,120,190,0.8);
+  background: rgba(150, 120, 190, 0.8);
   color: #fff;
   text-align: center;
   padding: 1rem;
@@ -140,7 +140,7 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container: fixed below header, centered, with fixed width */
+/* Active Card Container: below header, centered, fixed width */
 .active-card-container {
   position: fixed;
   top: 15%;
@@ -152,7 +152,7 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container: fixed at the bottom, horizontally scrollable */
+/* Deck Container for Collapsed Cards: fixed at bottom, horizontal scroll if needed */
 .deck-container,
 #deck-container {
   position: fixed;
@@ -188,9 +188,10 @@ html, body {
   z-index: 2;
 }
 
-/* Collapsed (deck) card: visible fully (no text hiding) but with a fixed small height */
+/* Deck card: always visible in the deck container with full text (if lifted) 
+   but by default only a 20px strip is visible. */
 .deck-card {
-  max-height: 20px; /* About 5mm */
+  max-height: 20px;
   opacity: 0.7;
   z-index: 1;
   position: relative;
@@ -198,14 +199,14 @@ html, body {
   transition: max-height 0.3s ease, transform 0.3s ease;
 }
 
-/* Hover effect on deck card: lift it by 100px */
-.deck-card:hover,
+/* On hover/touch, deck cards lift by 100px to reveal text, and scale slightly for a cylindrical effect */
 .deck-card-lift {
-  max-height: 120px; /* Increase height to reveal text */
-  transform: translateY(-100px);
+  max-height: 120px;
+  transform: translateY(-100px) scaleY(1.05);
 }
 
-/* Slide down-out animation for active card when answer is selected */
+/* Slide down-out animation for active card when an answer is selected:
+   the card fades out and slides down off-screen */
 @keyframes cardSlideDownOut {
   0% {
     opacity: 1;
@@ -220,10 +221,10 @@ html, body {
   animation: cardSlideDownOut 1s forwards;
 }
 
-/* Card question text */
+/* Card question text (smaller text) */
 .card-question-text {
-  font-size: 1.75rem;
-  margin-bottom: 1.25rem;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
   color: #333;
 }
 
