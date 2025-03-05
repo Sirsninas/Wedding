@@ -1,131 +1,104 @@
-/* Globalie stili */
-body {
-  font-family: 'Georgia', serif;
-  background: linear-gradient(to right, #ffe4e1, #f8c8dc);
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
-
-/* Iepazīšanās lapas stili */
-.intro-container {
-  text-align: center;
-  padding: 40px 20px;
-}
-
-.intro-title {
-  color: #b8336a;
-  font-size: 2.5em;
-  margin-bottom: 10px;
-}
-
-.intro-text {
-  font-size: 1.2em;
-  color: #555;
-}
-
-/* Pogu konteineri */
-.button-container {
-  display: flex;
-  justify-content: center;
-  gap: 50px;
-  margin-top: 50px;
-}
-
-/* Katram 3D modeļa pogas konteinerim */
-.model-button {
-  width: 150px;
-  height: 150px;
-  cursor: pointer;
-  perspective: 800px;
-  position: relative;
-}
-
-.model-container {
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  border: 2px solid transparent;
-  transition: transform 0.3s;
-}
-
-.model-button:hover .model-container {
-  transform: translateY(-10px);
-}
-
-.button-label {
-  position: absolute;
-  bottom: -30px;
-  width: 100%;
-  text-align: center;
-  font-size: 1.5em;
-  color: #fff;
-  text-shadow: 1px 1px 3px #000;
-}
-
-/* Aptaujas lapas stili (play.html) */
-.container {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  text-align: center;
-}
-
-.title {
-  color: #b8336a;
-  font-size: 2em;
-}
-
-/* Glassmorphism efekts aptaujas lodziņiem */
-.glass {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 20px;
-  margin: 20px auto;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  transition: transform 0.5s ease, opacity 0.5s ease;
-}
-
-/* Aptaujas jautājuma teksts */
-#question-text {
-  font-size: 1.5em;
-  margin-bottom: 20px;
-}
-
-/* Atbilžu pogas */
-.answer-btn {
-  display: block;
-  width: 80%;
-  margin: 10px auto;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 16px;
-  border: none;
-  transition: transform 0.3s ease, background 0.3s ease;
-}
-
-.answer-btn:hover {
-  transform: translateY(-8px);
-  background: rgba(255, 255, 255, 0.6);
-}
-
-/* Jautājuma bloka animācija – paceļas un izgaist kā mākonis */
-@keyframes riseAndDissolve {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-    filter: blur(0);
-  }
-  100% {
-    transform: translateY(-150px);
-    opacity: 0;
-    filter: blur(8px);
-  }
-}
-
-.rise-away {
-  animation: riseAndDissolve 1s forwards;
-}
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mīlestības Iepazīšanās</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="intro-container">
+    <!-- Virsraksts paliek tieši no HTML -->
+    <h1 class="intro-title">Laipni lūdzam mūsu mīlestības ceļojumā!</h1>
+    <!-- Pamatteksts tiks ielādēts no Google Sheets -->
+    <p class="intro-text">Ielādē datus...</p>
+  </div>
+  
+  <div class="button-container">
+    <!-- "JĀ" poga: konteineris, kurā tiks ielādēts tavs 3D modelis JA.glb -->
+    <div class="model-button" id="ja-button">
+      <div class="model-container" id="ja-container"></div>
+      <div class="button-label">JĀ</div>
+    </div>
+    <!-- "NĒ" poga: konteineris, kurā tiks ielādēts tavs 3D modelis NE.glb -->
+    <div class="model-button" id="ne-button">
+      <div class="model-container" id="ne-container"></div>
+      <div class="button-label">NĒ</div>
+    </div>
+  </div>
+  
+  <!-- Three.js un GLTFLoader -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r153/three.min.js" integrity="sha512-cURTXB3E41CT6TgWsk0EbwXidUNHQlg9NdHEh7k6AVg/zYcd4Z6WSZErT4bQguN5xj6DwDZVY9jHVryK76uGpg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/loaders/GLTFLoader.js"></script>
+  
+  <script>
+    // Ielādē tekstu no Google Sheets web app
+    fetch("https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec")
+      .then(response => response.text())
+      .then(data => {
+        // Aizvieto elementa ar klasi 'intro-text' saturu ar ielādēto tekstu (no šūnas A2)
+        document.querySelector('.intro-text').innerText = data;
+      })
+      .catch(error => console.error("Kļūda ielādējot tekstu no Google Sheets:", error));
+      
+    // Funkcija, kas inicializē Three.js scēnu un ielādē GLB modeli konkrētā konteinerī.
+    function initModel(containerId, modelUrl) {
+      const container = document.getElementById(containerId);
+      const width = container.clientWidth || 150;  // noklusējuma izmērs
+      const height = container.clientHeight || 150;
+      
+      const scene = new THREE.Scene();
+      scene.background = null;
+      
+      const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+      camera.position.set(0, 0, 3);
+      
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(width, height);
+      container.appendChild(renderer.domElement);
+      
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+      scene.add(ambientLight);
+      
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+      directionalLight.position.set(5, 5, 5);
+      scene.add(directionalLight);
+      
+      const loader = new THREE.GLTFLoader();
+      loader.load(modelUrl, function(gltf) {
+        const model = gltf.scene;
+        model.scale.set(1, 1, 1);
+        scene.add(model);
+        
+        function animate() {
+          requestAnimationFrame(animate);
+          model.rotation.y += 0.01;
+          renderer.render(scene, camera);
+        }
+        animate();
+      }, undefined, function(error) {
+        console.error("Kļūda ielādējot modeli no " + modelUrl, error);
+      });
+    }
+    
+    // Inicializē modeļus ("JA.glb" un "NE.glb")
+    initModel("ja-container", "JA.glb");
+    initModel("ne-container", "NE.glb");
+    
+    // Pārbauda, vai URL satur "uid" parametru.
+    function getUidParam() {
+      const params = new URLSearchParams(window.location.search);
+      return params.has('uid') ? '?uid=' + params.get('uid') : '';
+    }
+    
+    // Klikšķa notikumi – pāradresācija
+    document.getElementById("ja-button").addEventListener("click", function() {
+      window.location.href = "play.html" + getUidParam();
+    });
+    
+    document.getElementById("ne-button").addEventListener("click", function() {
+      window.location.href = "sad.html";
+    });
+  </script>
+</body>
+</html>
