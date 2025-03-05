@@ -1,20 +1,27 @@
-/* Globalie stili */
+/* Globalie stili ar mīkstiem pasteltoņiem */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
-  background: linear-gradient(to right, #ffe4e1, #f8c8dc);
+  background: linear-gradient(to right, #fff0f5, #ffe4e1);
   overflow-x: hidden;
+  transition: opacity 1s ease, filter 1s ease;
 }
 
-/* Iepazīšanās lapas stili */
+/* Mākonis dissolves efekts */
+.cloud-dissolve {
+  opacity: 0;
+  filter: blur(8px);
+}
+
+/* Iepazīšanās lapas konteineris */
 .intro-container {
   text-align: center;
   padding: 40px 20px;
 }
 
 .intro-title {
-  color: #b8336a;
+  color: #d17c9c; /* Mīksta rozā/rožu krāsa */
   font-size: 2.5em;
   margin-bottom: 10px;
 }
@@ -39,6 +46,11 @@ body {
   cursor: pointer;
   text-align: center;
   position: relative;
+  transition: transform 0.3s;
+}
+
+.emoji-button:hover {
+  transform: translateY(-10px);
 }
 
 .button-label {
@@ -50,7 +62,7 @@ body {
   text-shadow: 1px 1px 3px #000;
 }
 
-/* Emoji stils */
+/* Emoji saturs */
 .emoji-content {
   font-size: 5em;
 }
@@ -66,7 +78,7 @@ body {
   100% { transform: scale(1) rotateZ(360deg); }
 }
 
-/* "NĒ" emoji animācija: paplašinās un atgriežas sākotnējā formā */
+/* "NĒ" emoji animācija: paplašināsies un atgriežas sākotnējā formā */
 .ne-emoji {
   animation: expandContract 2s ease-in-out infinite;
 }
