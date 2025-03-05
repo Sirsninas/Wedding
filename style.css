@@ -118,7 +118,6 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
-  /* No background specified – transparent */
   overflow-x: hidden;
   transition: opacity 1s ease, filter 1s ease;
 }
@@ -140,7 +139,7 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container: below header, centered */
+/* Active Card Container */
 .active-card-container {
   position: fixed;
   top: 15%;
@@ -152,14 +151,14 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container: fixed at bottom, horizontal scrolling */
+/* Deck Container */
 .deck-container,
 #deck-container {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 20vh;  /* Reduced height */
+  height: 20vh; /* Adjust height as needed */
   z-index: 2;
   display: flex;
   gap: 0.25rem;
@@ -169,7 +168,7 @@ html, body {
   scroll-snap-type: x mandatory;
 }
 
-/* Question Card (common styles) */
+/* Question Card */
 .question-card {
   background: rgba(255,255,255,0.2);
   backdrop-filter: blur(10px);
@@ -192,11 +191,10 @@ html, body {
   z-index: 2;
 }
 
-/* Deck card: for answered questions in the deck – fixed width */
+/* Deck card: for answered cards; fixed size (70% of active) */
 .deck-card {
-  width: 150px; /* Fixed width for deck cards */
-  margin: 0;
-  max-height: 20px;  /* About 5mm visible */
+  width: 150px; /* Fixed width */
+  margin-right: -40px; /* Overlap for stacking effect */
   opacity: 0.7;
   z-index: 1;
   position: relative;
@@ -205,11 +203,11 @@ html, body {
   scroll-snap-align: center;
 }
 
-/* When a deck card is centered (expanded) via scroll snap */
+/* When a deck card is centered (via scroll snap), it expands */
 .expanded-deck-card {
   width: 80%;
   max-width: 640px;
-  margin: 0 auto;
+  margin-right: 10px;
   max-height: 120px;
   transform: perspective(1000px) rotateY(10deg);
   font-size: 1.2rem;
@@ -280,7 +278,7 @@ html, body {
   background: #b8336a;
 }
 
-/* Finish container */
+/* Finish Container */
 .finish-container {
   text-align: center;
   margin: 1.875rem auto;
