@@ -3,64 +3,139 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Romantiskā aptauja - Spēle</title>
+  <title>Romantiskā Aptauja</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1 class="title">Mūsu romantiskā aptauja 💕</h1>
+    <h1 class="title">Mūsu Romantiskā Aptauja 💕</h1>
     <div id="question-container" class="glass">
       <p id="question-text"></p>
       <div id="answer-buttons"></div>
     </div>
   </div>
+
   <script>
-    const questions = [
-      { text: "Kas būtu tavs sapņu ceļojuma galamērķis? 🏝️", answers: ["Bali", "Parīze", "Jaunzēlande", "Mājās ar tevi 💖"] },
-      { text: "Kādu filmu vislabāk skatīties kopā? 🎬", answers: ["Romantisku", "Komēdiju", "Trilleri", "Multfilmu"] },
-      { text: "Kas ir tavs ideālais randiņš? 🌹", answers: ["Pikniks parkā", "Vakariņas sveču gaismā", "Piedzīvojumu ceļojums", "Mājās, apskaujoties"] },
-    ];
-
-    let questionIndex = 0;
-    const questionContainer = document.getElementById("question-container");
-    const questionText = document.getElementById("question-text");
-    const answerButtons = document.getElementById("answer-buttons");
-
-    function showQuestion() {
-      resetState();
-      const currentQuestion = questions[questionIndex];
-      questionText.innerText = currentQuestion.text;
-      currentQuestion.answers.forEach(answer => {
-        const button = document.createElement("button");
-        button.innerText = answer;
-        button.classList.add("answer-btn");
-        button.addEventListener("click", () => selectAnswer(button));
-        answerButtons.appendChild(button);
-      });
+    // Iegūst UID no URL (piem., play.html?uid=XYZ)
+    function getUid() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('uid') || "";
     }
+    const uid = getUid();
 
-    function resetState() {
-      questionContainer.classList.remove("rise-away");
-      answerButtons.innerHTML = "";
-    }
+    // Globālas mainīgās
+    let questions = [];  // masīvs ar jautājumiem, ko izgūst no Google Sheets
+    let currentQuestionIndex = 0;
 
-    function selectAnswer(selectedButton) {
-      // Šeit vari saglabāt atbildi, ja nepieciešams.
-      questionContainer.classList.add("rise-away");
-      setTimeout(() => {
-        questionIndex++;
-        if (questionIndex < questions.length) {
-          resetState();
+    // Iegūst jautājumus un saglabā tos globālā masīvā
+    function fetchQuestions() {
+      // Pielāgo savu Google Apps Script endpoint URL un pievieno parametru action=getQuestions un uid
+      const url = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec?action=getQuestions&uid=" + uid;
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          questions = data.questions; // sagaidām struktūru: { questions: [ { row, text, answers:[...], selected }, ... ] }
           showQuestion();
-          window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' });
-        } else {
-          // Ja jautājumi beidzas, vari pāradresēt uz rezultātu lapu.
-          window.location.href = "results.html";
-        }
+        })
+        .catch(error => console.error("Kļūda izgūstot jautājumus:", error));
+    }
+
+    // Attēlo pašreizējo jautājumu
+    function showQuestion() {
+      const container = document.getElementById("question-container");
+      container.classList.remove("rise-away");
+      container.classList.remove("appear-from-cloud");
+
+      const questionTextElem = document.getElementById("question-text");
+      const answerButtonsElem = document.getElementById("answer-buttons");
+      answerButtonsElem.innerHTML = ""; // notīra iepriekšējās atbildes
+
+      if (currentQuestionIndex < questions.length) {
+        const q = questions[currentQuestionIndex];
+        questionTextElem.innerText = q.text;
+
+        q.answers.forEach(answer => {
+          const btn = document.createElement("button");
+          btn.innerText = answer;
+          btn.classList.add("answer-btn");
+          // Ja atbilde jau ir saglabāta, iezīmē to ar sirds emoji
+          if (q.selected && q.selected === answer) {
+            btn.innerHTML = "❤️ " + answer;
+          }
+          btn.addEventListener("click", () => {
+            selectAnswer(q, answer, btn);
+          });
+          answerButtonsElem.appendChild(btn);
+        });
+      } else {
+        // Ja jautājumi beidzas, parāda pogu uz rezultātiem
+        questionTextElem.innerText = "Aptauja ir pabeigta!";
+        const resultsBtn = document.createElement("button");
+        resultsBtn.innerText = "Skatīt rezultātus";
+        resultsBtn.classList.add("results-btn");
+        resultsBtn.addEventListener("click", () => {
+          window.location.href = "results.html" + (uid ? ("?uid=" + uid) : "");
+        });
+        answerButtonsElem.appendChild(resultsBtn);
+      }
+    }
+
+    // Funkcija, kas tiek izsaukta, kad tiek izvēlēta atbilde
+    function selectAnswer(question, selectedAnswer, buttonElem) {
+      // Ja izvēlētā atbilde jau ir saglabāta, var ļaut mainīt (vai var atgriezties bez izsaukuma)
+      if (question.selected === selectedAnswer) {
+        // Var atļaut atkārtotu klikšķi, bet tādā gadījumā neizsauc jaunu update
+        return;
+      }
+      // Atjaunina lokālo jautājuma objektu
+      question.selected = selectedAnswer;
+      
+      // Atjaunina UI: noņem iezīmējumu no visām pogām un pievieno sirds emoji izvēlētajai
+      const buttons = document.querySelectorAll("#answer-buttons .answer-btn");
+      buttons.forEach(btn => {
+        btn.innerHTML = btn.innerText;
+      });
+      buttonElem.innerHTML = "❤️ " + selectedAnswer;
+      
+      // Sūta atjauninājumu uz Google Sheets
+      updateAnswer(question.row, selectedAnswer);
+      
+      // Pievieno animāciju, lai jautājuma lodziņš "izgaistu" kā mākonis
+      const container = document.getElementById("question-container");
+      container.classList.add("rise-away");
+      
+      // Pēc animācijas laika (1s) ielādē nākamo jautājumu
+      setTimeout(() => {
+        currentQuestionIndex++;
+        container.classList.remove("rise-away");
+        container.classList.add("appear-from-cloud");
+        showQuestion();
       }, 1000);
     }
 
-    showQuestion();
+    // Funkcija, kas veic POST pieprasījumu uz Google Apps Script, lai atjauninātu atbildi
+    function updateAnswer(row, answer) {
+      const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec";
+      const data = {
+        action: "updateAnswer",
+        uid: uid,
+        row: row,
+        answer: answer
+      };
+      fetch(updateUrl, {
+        method: "POST",
+        mode: "no-cors",  // ja nepieciešams
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      .then(() => {
+        console.log("Atbilde ierakstīta rindā " + row);
+      })
+      .catch(error => console.error("Kļūda ierakstot atbildi:", error));
+    }
+
+    // Sākotnēji izgūst jautājumus
+    fetchQuestions();
   </script>
 </body>
 </html>
