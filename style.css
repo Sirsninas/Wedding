@@ -113,92 +113,116 @@ body {
 /* ==========================
    Play lapas un citu lapu stili
    ========================== */
-.container {
+/* Globalie stili – fona gradienta pāreja no mīksta rozā līdz baltam */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Georgia', serif;
+  background: linear-gradient(to bottom, #fff0f5, #ffffff);
+  overflow-x: hidden;
+  transition: opacity 1s ease, filter 1s ease;
+}
+
+/* "Mākonis" pārejas efekts, ko var izmantot arī citu lapu pārejai */
+.cloud-dissolve {
+  opacity: 0;
+  filter: blur(8px);
+}
+
+/* Kontainers, kur atrodas visi jautājumu kartiņas */
+.cards-container {
   max-width: 800px;
   margin: 40px auto;
   padding: 20px;
-  text-align: center;
 }
 
-.title {
-  color: #b8336a;
-  font-size: 2.5em;
-  margin-bottom: 20px;
-}
-
-/* Glassmorphism efekts jautājuma lodziņam */
-.glass {
+/* Kartiņas stils */
+.question-card {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 15px;
-  padding: 40px;
-  margin: 20px auto;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  position: relative;
-  min-height: 200px;
-}
-
-/* Jautājuma teksts (play lapā) */
-#question-text {
-  font-size: 2em;
-  margin-bottom: 30px;
-  color: #333;
-}
-
-/* Atbilžu pogu stils (play lapā) */
-.answer-btn {
-  display: block;
-  width: 90%;
-  margin: 15px auto;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  margin-bottom: 20px;
+  padding: 30px;
+  transition: transform 0.5s ease, opacity 0.5s ease;
   cursor: pointer;
-  font-size: 1.8em;
-  border: none;
-  transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.answer-btn:hover {
-  transform: translateY(-8px);
-  background: rgba(255, 255, 255, 0.7);
+/* Aktīvā kartiņa – pilna izmēra, vieglāka, lai koncentrētos uz to */
+.active-card {
+  transform: scale(1);
+  opacity: 1;
 }
 
-/* Fade out animācija – jautājuma lodziņš izgaist, pārvietojoties uz augšu */
-@keyframes fadeOutUp {
+/* Neaktīvās kartiņas – minimizētas un nedaudz izbalinātas */
+.inactive-card {
+  transform: scale(0.9);
+  opacity: 0.7;
+}
+
+/* Kartiņas fade out animācija – kad tiek atbildēts */
+@keyframes cardFadeOutUp {
   0% {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0);
   }
   100% {
     opacity: 0;
     transform: translateY(-150px);
-    filter: blur(8px);
   }
 }
-.fade-out {
-  animation: fadeOutUp 1s forwards;
+.card-fade-out {
+  animation: cardFadeOutUp 1s forwards;
 }
 
-/* Fade in animācija – nākamais jautājums parādās no apakšas */
-@keyframes fadeInUp {
+/* Kartiņas fade in animācija – ja aktīvā kartiņa tiek mainīta */
+@keyframes cardFadeInUp {
   0% {
     opacity: 0;
     transform: translateY(150px);
-    filter: blur(8px);
   }
   100% {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0);
   }
 }
 .fade-in {
-  animation: fadeInUp 1s forwards;
+  animation: cardFadeInUp 1s forwards;
 }
 
-/* Rezultātu pogas stils (ja beidzoties jautājumiem parādās rezultātu poga) */
+/* Kartiņas jautājuma teksts */
+.card-question-text {
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Atbilžu pogu konteiners iekārtots kartiņā */
+.card-answer-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* Atbilžu pogas stils kartiņām – lielas pogas */
+.card-answer-btn {
+  flex: 1 1 40%;
+  min-width: 150px;
+  padding: 15px;
+  font-size: 1.6em;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.4);
+  transition: transform 0.3s ease, background 0.3s ease;
+  cursor: pointer;
+}
+.card-answer-btn:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Rezultātu pogas stils */
 .results-btn {
   display: block;
   width: 90%;
@@ -212,10 +236,16 @@ body {
   cursor: pointer;
   transition: background 0.3s;
 }
-
 .results-btn:hover {
   background: #b8336a;
 }
+
+/* Finish pogas konteiners */
+.finish-container {
+  text-align: center;
+  margin: 30px auto;
+}
+
 
 /* ==========================
    Sad lapas (vai citu vienkāršu lapu) stili
