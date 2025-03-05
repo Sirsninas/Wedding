@@ -123,7 +123,7 @@ html, body {
   transition: opacity 1s ease, filter 1s ease;
 }
 
-/* Header with soft violet tone */
+/* Header (if needed) */
 .page-header {
   position: fixed;
   top: 0;
@@ -140,7 +140,7 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active card container: full active question */
+/* Active Card Container: full active question */
 .active-card-container {
   position: fixed;
   top: 15%; /* Adjust as needed */
@@ -152,7 +152,7 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck container: collapsed cards arranged at the bottom */
+/* Deck Container: holds collapsed cards at the bottom */
 .deck-container,
 #deck-container {
   position: fixed;
@@ -171,7 +171,7 @@ html, body {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 1rem;
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
   margin: 0 auto;
   padding: 1.5rem;
   transition: max-height 0.5s ease, opacity 0.5s ease;
@@ -179,23 +179,24 @@ html, body {
   width: 100%;
   max-width: 800px;
   overflow: hidden;
+  position: relative;
 }
 
 /* Active card: full size */
 .active-card {
-  max-height: 90vh; /* Adjust so that it occupies the main view */
+  max-height: 90vh; /* occupies most of the view */
   opacity: 1;
   z-index: 2;
 }
 
-/* Collapsed card: only 20px visible (approx. 5mm) */
+/* Collapsed card: only 20px (approx. 5mm) of its top edge visible */
 .collapsed-card {
   max-height: 20px;
   opacity: 0.7;
   z-index: 1;
 }
 
-/* Fade out animation for active card when answer is submitted */
+/* Fade out animation for active card when answered */
 @keyframes cardFadeOut {
   0% {
     opacity: 1;
