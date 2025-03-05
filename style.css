@@ -129,7 +129,7 @@ html, body {
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(150,120,190,0.8);
+  background: rgba(150, 120, 190, 0.8);
   color: #fff;
   text-align: center;
   padding: 1rem;
@@ -140,10 +140,10 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container: below header */
+/* Active Card Container */
 .active-card-container {
   position: fixed;
-  top: 15%; /* Adjust to be below header */
+  top: 15%; /* Below header */
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -152,7 +152,7 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container for Collapsed Cards: fixed at the bottom */
+/* Deck Container for Collapsed Cards */
 .deck-container,
 #deck-container {
   position: fixed;
@@ -171,24 +171,24 @@ html, body {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 1rem;
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
   margin: 0 auto;
   padding: 1.5rem;
   transition: opacity 0.5s ease, transform 0.5s ease;
   cursor: pointer;
-  width: 100%;
+  width: 90%; /* not full screen width */
   max-width: 800px;
   overflow: hidden;
   position: relative;
 }
 
-/* Active card: full view */
+/* Active card: fully visible */
 .active-card {
   opacity: 1;
   z-index: 2;
 }
 
-/* Collapsed card: only 20px visible (approx. 5mm) */
+/* Collapsed (answered) card: only about 20px visible */
 .collapsed-card,
 .answered-card {
   max-height: 20px;
@@ -202,14 +202,14 @@ html, body {
   transition: max-height 0.3s ease, transform 0.3s ease;
 }
 
-/* On hover, collapsed card lifts up a bit (revealing more) */
+/* When hovering on a collapsed card, lift it slightly to reveal more text */
 .collapsed-card:hover {
   max-height: 50px;
   transform: translateY(-10px);
 }
 
-/* Slide down-out animation for active card when an answer is selected:
-   it slides down and fades out */
+/* Slide down-out animation for active card when an answer is submitted.
+   The card fades and slides down completely (covering the full container height). */
 @keyframes cardSlideDownOut {
   0% {
     opacity: 1;
