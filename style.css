@@ -140,7 +140,7 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container: positioned below header, centered */
+/* Active Card Container: below header, centered */
 .active-card-container {
   position: fixed;
   top: 15%;
@@ -152,18 +152,22 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container for Deck Cards: fixed at bottom, horizontal scrolling if needed */
+/* Deck Container: fixed at bottom, vertical scrolling only */
 .deck-container,
 #deck-container {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+  height: 40%; /* Use 40% of viewport height for deck */
   z-index: 2;
   display: flex;
+  flex-direction: column;
   gap: 0.25rem;
   padding: 0.5rem;
-  overflow-x: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
 }
 
 /* Question Card Styles */
@@ -180,6 +184,7 @@ html, body {
   max-width: 800px;
   overflow: hidden;
   position: relative;
+  scroll-snap-align: center;
 }
 
 /* Active card: fully visible */
@@ -188,27 +193,32 @@ html, body {
   z-index: 2;
 }
 
-/* Deck card: for answered cards in the deck; scaled to 70% of active card's size */
+/* Deck card: for answered questions in the deck.
+   Default: only 20px height (approx. 5mm) visible.
+   When expanded (if centered in deck scroll), becomes 80% width, with reduced font size and a 3D rotation effect. */
 .deck-card {
   width: 70%;
   max-width: 560px; /* 70% of 800px */
   margin: 0 auto;
-  max-height: 20px;  /* About 5mm visible */
+  max-height: 20px;
   opacity: 0.7;
   z-index: 1;
   position: relative;
   overflow: hidden;
-  transition: max-height 0.3s ease, transform 0.3s ease;
+  transition: all 0.5s ease;
+  scroll-snap-align: center;
 }
 
-/* When deck card is hovered or touched, it lifts by 100px and scales slightly */
-.deck-card:hover,
-.deck-card-lift {
-  max-height: 120px; /* Adjust to reveal more text */
-  transform: translateY(-100px) scaleY(1.05);
+/* When a deck card is centered (expanded) */
+.expanded-deck-card {
+  width: 80%;
+  max-width: 640px;
+  max-height: 120px;
+  transform: perspective(1000px) rotateY(10deg);
+  font-size: 1.4rem; /* slightly reduced font */
 }
 
-/* Slide down-out animation for active card when an answer is selected */
+/* Slide down-out animation for active card when answered */
 @keyframes cardSlideDownOut {
   0% {
     opacity: 1;
