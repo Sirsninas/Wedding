@@ -118,7 +118,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
-  background: linear-gradient(to bottom, #fff0f5, #ffffff);
+  background: linear-gradient(to bottom, #fff0f5, #ffffff); /* Soft pink to white */
   overflow-x: hidden;
   transition: opacity 1s ease, filter 1s ease;
 }
@@ -143,7 +143,7 @@ html, body {
 /* Active Card Container */
 .active-card-container {
   position: fixed;
-  top: 15%;
+  top: 15%; /* Below header */
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -152,21 +152,21 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container (for answered cards): fixed at bottom, vertical scrolling only */
+/* Deck Container */
 .deck-container,
 #deck-container {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 40vh;
+  height: 40vh; /* 40% of viewport height */
   z-index: 2;
   display: flex;
-  gap: 0.25rem;
+  gap: 0;
   padding: 0.5rem;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scroll-snap-type: y mandatory;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
 }
 
 /* Question Card */
@@ -179,7 +179,7 @@ html, body {
   padding: 1.5rem;
   transition: opacity 0.5s ease, transform 0.5s ease;
   cursor: pointer;
-  width: 90%;
+  width: 90%; /* Not full screen width */
   max-width: 800px;
   overflow: hidden;
   position: relative;
@@ -192,12 +192,12 @@ html, body {
   z-index: 2;
 }
 
-/* Deck Card: for answered cards in the deck */
+/* Deck card: for answered cards in the deck. 
+   They are scaled to 70% of active card size and overlap by default (using negative margin) */
 .deck-card {
   width: 70%;
-  max-width: 560px;
-  margin: 0 auto;
-  max-height: 20px;
+  max-width: 560px; /* 70% of 800px */
+  margin-right: -40px; /* Overlap: adjust this value for stacking */
   opacity: 0.7;
   z-index: 1;
   position: relative;
@@ -206,10 +206,11 @@ html, body {
   scroll-snap-align: center;
 }
 
-/* When a deck card is centered during scroll, expand it */
+/* When a deck card is centered (via scroll snap), it expands */
 .expanded-deck-card {
   width: 80%;
   max-width: 640px;
+  margin-right: 10px;
   max-height: 120px;
   transform: perspective(1000px) rotateY(10deg);
   font-size: 1.2rem;
