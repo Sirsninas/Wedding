@@ -118,7 +118,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Georgia', serif;
-  background: linear-gradient(to bottom, #fff0f5, #ffffff); /* Soft pink to white */
+  background: linear-gradient(to bottom, #fff0f5, #ffffff);
   overflow-x: hidden;
   transition: opacity 1s ease, filter 1s ease;
 }
@@ -140,7 +140,7 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container: below header, centered */
+/* Active Card Container */
 .active-card-container {
   position: fixed;
   top: 15%;
@@ -152,17 +152,16 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container: fixed at bottom, vertical scrolling only */
+/* Deck Container (for answered cards): fixed at bottom, vertical scrolling only */
 .deck-container,
 #deck-container {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 40%; /* Use 40% of viewport height for deck */
+  height: 40vh;
   z-index: 2;
   display: flex;
-  flex-direction: column;
   gap: 0.25rem;
   padding: 0.5rem;
   overflow-y: auto;
@@ -170,7 +169,7 @@ html, body {
   scroll-snap-type: y mandatory;
 }
 
-/* Question Card Styles */
+/* Question Card */
 .question-card {
   background: rgba(255,255,255,0.2);
   backdrop-filter: blur(10px);
@@ -180,7 +179,7 @@ html, body {
   padding: 1.5rem;
   transition: opacity 0.5s ease, transform 0.5s ease;
   cursor: pointer;
-  width: 90%; /* Not full screen width */
+  width: 90%;
   max-width: 800px;
   overflow: hidden;
   position: relative;
@@ -193,12 +192,10 @@ html, body {
   z-index: 2;
 }
 
-/* Deck card: for answered questions in the deck.
-   Default: only 20px height (approx. 5mm) visible.
-   When expanded (if centered in deck scroll), becomes 80% width, with reduced font size and a 3D rotation effect. */
+/* Deck Card: for answered cards in the deck */
 .deck-card {
   width: 70%;
-  max-width: 560px; /* 70% of 800px */
+  max-width: 560px;
   margin: 0 auto;
   max-height: 20px;
   opacity: 0.7;
@@ -209,13 +206,13 @@ html, body {
   scroll-snap-align: center;
 }
 
-/* When a deck card is centered (expanded) */
+/* When a deck card is centered during scroll, expand it */
 .expanded-deck-card {
   width: 80%;
   max-width: 640px;
   max-height: 120px;
   transform: perspective(1000px) rotateY(10deg);
-  font-size: 1.4rem; /* slightly reduced font */
+  font-size: 1.2rem;
 }
 
 /* Slide down-out animation for active card when answered */
@@ -240,7 +237,7 @@ html, body {
   color: #333;
 }
 
-/* Answer container within card */
+/* Answer container */
 .card-answer-container {
   display: flex;
   flex-wrap: wrap;
@@ -248,7 +245,7 @@ html, body {
   justify-content: center;
 }
 
-/* Answer button style */
+/* Answer button */
 .card-answer-btn {
   flex: 1 1 40%;
   min-width: 150px;
@@ -265,7 +262,7 @@ html, body {
   background: rgba(255,255,255,0.7);
 }
 
-/* Results button style */
+/* Results button */
 .results-btn {
   display: block;
   width: 90%;
