@@ -140,10 +140,10 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container: below header, centered */
+/* Active Card Container: positioned below header, centered */
 .active-card-container {
   position: fixed;
-  top: 15%; /* Adjust if needed */
+  top: 15%;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -152,7 +152,7 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container: fixed at bottom, horizontal scrolling if needed */
+/* Deck Container for Deck Cards: fixed at bottom, horizontal scrolling if needed */
 .deck-container,
 #deck-container {
   position: fixed;
@@ -188,12 +188,12 @@ html, body {
   z-index: 2;
 }
 
-/* Deck card: for answered cards in the deck; scaled to 70% of active card */
+/* Deck card: for answered cards in the deck; scaled to 70% of active card's size */
 .deck-card {
   width: 70%;
   max-width: 560px; /* 70% of 800px */
   margin: 0 auto;
-  max-height: 20px; /* About 5mm visible */
+  max-height: 20px;  /* About 5mm visible */
   opacity: 0.7;
   z-index: 1;
   position: relative;
@@ -201,10 +201,10 @@ html, body {
   transition: max-height 0.3s ease, transform 0.3s ease;
 }
 
-/* Hover/touch effect: when a deck card is hovered, it lifts by 100px and scales slightly */
+/* When deck card is hovered or touched, it lifts by 100px and scales slightly */
 .deck-card:hover,
 .deck-card-lift {
-  max-height: 120px;
+  max-height: 120px; /* Adjust to reveal more text */
   transform: translateY(-100px) scaleY(1.05);
 }
 
