@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Romantiskā Aptauja</title>
+  <title>Romantiskā Aptauja - Spēle</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,61 +14,52 @@
       <div id="answer-buttons"></div>
     </div>
   </div>
-
+  
   <script>
-    // Iegūst UID no URL (piem., play.html?uid=XYZ)
-    function getUid() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get('uid') || "";
-    }
-    const uid = getUid();
-
-    // Globālas mainīgās
-    let questions = [];  // masīvs ar jautājumiem, ko izgūst no Google Sheets
+    // Iegūst uid no URL, piemēram, play.html?uid=XYZ
+    const uid = new URLSearchParams(window.location.search).get('uid') || "";
+    
+    let questions = [];
     let currentQuestionIndex = 0;
-
-    // Iegūst jautājumus un saglabā tos globālā masīvā
+    
+    // Iegūst jautājumus un atbilžu variantus no Google Sheets, izmantojot jūsu Google Apps Script web app
     function fetchQuestions() {
-      // Pielāgo savu Google Apps Script endpoint URL un pievieno parametru action=getQuestions un uid
       const url = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec?action=getQuestions&uid=" + uid;
       fetch(url)
         .then(response => response.json())
         .then(data => {
-          questions = data.questions; // sagaidām struktūru: { questions: [ { row, text, answers:[...], selected }, ... ] }
+          questions = data.questions; 
           showQuestion();
         })
         .catch(error => console.error("Kļūda izgūstot jautājumus:", error));
     }
-
-    // Attēlo pašreizējo jautājumu
+    
+    // Parāda pašreizējo jautājumu ar lielākiem elementiem
     function showQuestion() {
       const container = document.getElementById("question-container");
-      container.classList.remove("rise-away");
-      container.classList.remove("appear-from-cloud");
-
+      container.classList.remove("fade-in");
+      container.classList.remove("fade-out");
+      
       const questionTextElem = document.getElementById("question-text");
       const answerButtonsElem = document.getElementById("answer-buttons");
-      answerButtonsElem.innerHTML = ""; // notīra iepriekšējās atbildes
-
+      answerButtonsElem.innerHTML = ""; // notīra atbilžu pogas
+      
       if (currentQuestionIndex < questions.length) {
         const q = questions[currentQuestionIndex];
         questionTextElem.innerText = q.text;
-
+        questionTextElem.style.fontSize = "2em";
+        // Katram atbilžu variantam izveido pogu ar palielinātu fontu
         q.answers.forEach(answer => {
           const btn = document.createElement("button");
           btn.innerText = answer;
           btn.classList.add("answer-btn");
-          // Ja atbilde jau ir saglabāta, iezīmē to ar sirds emoji
-          if (q.selected && q.selected === answer) {
-            btn.innerHTML = "❤️ " + answer;
-          }
           btn.addEventListener("click", () => {
             selectAnswer(q, answer, btn);
           });
           answerButtonsElem.appendChild(btn);
         });
       } else {
-        // Ja jautājumi beidzas, parāda pogu uz rezultātiem
+        // Ja jautājumi ir beigušies, parādām rezultātu pogu
         questionTextElem.innerText = "Aptauja ir pabeigta!";
         const resultsBtn = document.createElement("button");
         resultsBtn.innerText = "Skatīt rezultātus";
@@ -79,62 +70,43 @@
         answerButtonsElem.appendChild(resultsBtn);
       }
     }
-
+    
     // Funkcija, kas tiek izsaukta, kad tiek izvēlēta atbilde
     function selectAnswer(question, selectedAnswer, buttonElem) {
-      // Ja izvēlētā atbilde jau ir saglabāta, var ļaut mainīt (vai var atgriezties bez izsaukuma)
-      if (question.selected === selectedAnswer) {
-        // Var atļaut atkārtotu klikšķi, bet tādā gadījumā neizsauc jaunu update
-        return;
-      }
-      // Atjaunina lokālo jautājuma objektu
+      // Marķē izvēlēto atbildi ar sirds emoji
       question.selected = selectedAnswer;
-      
-      // Atjaunina UI: noņem iezīmējumu no visām pogām un pievieno sirds emoji izvēlētajai
       const buttons = document.querySelectorAll("#answer-buttons .answer-btn");
-      buttons.forEach(btn => {
-        btn.innerHTML = btn.innerText;
-      });
+      buttons.forEach(btn => btn.innerHTML = btn.innerText);
       buttonElem.innerHTML = "❤️ " + selectedAnswer;
       
-      // Sūta atjauninājumu uz Google Sheets
       updateAnswer(question.row, selectedAnswer);
       
-      // Pievieno animāciju, lai jautājuma lodziņš "izgaistu" kā mākonis
+      // Pielieto fade out animāciju – jautājuma lodziņš izgaist kā mākonis, paceļoties uz augšu
       const container = document.getElementById("question-container");
-      container.classList.add("rise-away");
+      container.classList.add("fade-out");
       
-      // Pēc animācijas laika (1s) ielādē nākamo jautājumu
       setTimeout(() => {
         currentQuestionIndex++;
-        container.classList.remove("rise-away");
-        container.classList.add("appear-from-cloud");
+        container.classList.remove("fade-out");
+        container.classList.add("fade-in");
         showQuestion();
       }, 1000);
     }
-
-    // Funkcija, kas veic POST pieprasījumu uz Google Apps Script, lai atjauninātu atbildi
+    
+    // Nosūta POST pieprasījumu uz Google Sheets, lai atjauninātu izvēlēto atbildi
     function updateAnswer(row, answer) {
       const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec";
-      const data = {
-        action: "updateAnswer",
-        uid: uid,
-        row: row,
-        answer: answer
-      };
+      const data = { action: "updateAnswer", uid: uid, row: row, answer: answer };
       fetch(updateUrl, {
         method: "POST",
-        mode: "no-cors",  // ja nepieciešams
+        mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
-      })
-      .then(() => {
+      }).then(() => {
         console.log("Atbilde ierakstīta rindā " + row);
-      })
-      .catch(error => console.error("Kļūda ierakstot atbildi:", error));
+      }).catch(error => console.error("Kļūda ierakstot atbildi:", error));
     }
-
-    // Sākotnēji izgūst jautājumus
+    
     fetchQuestions();
   </script>
 </body>
