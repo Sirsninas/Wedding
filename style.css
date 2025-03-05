@@ -113,7 +113,7 @@ body {
 /* ==========================
    Play lapas un citu lapu stili
    ========================== */
-/* Global Styles for the Play Page */
+/* Global background and transition settings */
 body {
   margin: 0;
   padding: 0;
@@ -122,22 +122,9 @@ body {
   overflow-x: hidden;
   transition: opacity 1s ease, filter 1s ease;
 }
-.cloud-dissolve {
-  opacity: 0;
-  filter: blur(8px);
-}
 
-/* Container for deck (cards) */
-.cards-container,
-#cards-container {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-  position: relative;
-}
-
-/* Active card container is rendered separately (above the deck) */
-#active-card-container {
+/* Active card container (full active question) */
+.active-card-container {
   position: fixed;
   top: 10%;
   left: 50%;
@@ -146,14 +133,16 @@ body {
   z-index: 3;
 }
 
-/* Deck container (collapsed cards) fixed at bottom */
-#deck-container {
+/* Deck container for collapsed cards (answered ones) */
+.deck-container,
+#deck-container,
+#cards-container {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 2;
   padding: 10px;
+  z-index: 2;
 }
 
 /* Question Card Styles */
@@ -161,7 +150,7 @@ body {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   margin: 10px auto;
   padding: 30px;
   transition: transform 0.5s ease, opacity 0.5s ease;
@@ -177,14 +166,14 @@ body {
   z-index: 2;
 }
 
-/* Collapsed card: only top portion visible (50px height) and offset horizontally */
+/* Collapsed card: positioned so only about 5mm (approx. 10px) of its top is visible */
 .collapsed-card {
-  transform: translateY(calc(100% - 50px));
+  transform: translateY(calc(100% - 10px));
   opacity: 0.7;
   z-index: 1;
 }
 
-/* Expanded card (if deck is fully expanded) */
+/* Expanded card style if the deck is opened (not used in this version) */
 .expanded-card {
   transform: translateY(0);
   opacity: 1;
@@ -192,19 +181,19 @@ body {
   margin-bottom: 20px;
 }
 
-/* Fade out animation for active card */
-@keyframes cardFadeOutUp {
+/* Slide down animation for active card transitioning into the deck */
+@keyframes cardSlideDown {
   0% {
     opacity: 1;
     transform: translateY(0);
   }
   100% {
-    opacity: 0;
-    transform: translateY(-150px);
+    opacity: 0.7;
+    transform: translateY(calc(100% - 10px));
   }
 }
-.card-fade-out {
-  animation: cardFadeOutUp 1s forwards;
+.card-slide-down {
+  animation: cardSlideDown 1s forwards;
 }
 
 /* Card question text */
@@ -214,7 +203,7 @@ body {
   color: #333;
 }
 
-/* Answer button container */
+/* Answer container within card */
 .card-answer-container {
   display: flex;
   flex-wrap: wrap;
@@ -222,7 +211,7 @@ body {
   justify-content: center;
 }
 
-/* Answer button style */
+/* Large answer button styles */
 .card-answer-btn {
   flex: 1 1 40%;
   min-width: 150px;
