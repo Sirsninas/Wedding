@@ -8,19 +8,19 @@
 </head>
 <body>
   <div class="intro-container">
-    <!-- Virsraksts paliek no HTML -->
+    <!-- Virsraksts paliek statisks -->
     <h1 class="intro-title">Laipni lūdzam mūsu mīlestības ceļojumā!</h1>
-    <!-- Teksts ielādēts no Google Sheets -->
+    <!-- Teksts tiks ielādēts no Google Sheets (šūna A2, "Lapa1") -->
     <p class="intro-text">Ielādē datus...</p>
   </div>
   
   <div class="button-container">
-    <!-- "JĀ" poga ar sarkanu sirds emoji -->
+    <!-- "JĀ" pogas bloks -->
     <div class="emoji-button" id="ja-button">
       <div class="emoji-content ja-emoji">❤️</div>
       <div class="button-label">JĀ</div>
     </div>
-    <!-- "NĒ" poga ar salausto sirds emoji -->
+    <!-- "NĒ" pogas bloks -->
     <div class="emoji-button" id="ne-button">
       <div class="emoji-content ne-emoji">💔</div>
       <div class="button-label">NĒ</div>
@@ -42,14 +42,17 @@
       return params.has('uid') ? '?uid=' + params.get('uid') : '';
     }
     
-    // Klikšķa notikumi – pāradresācija uz play.html vai sad.html.
-    document.getElementById("ja-button").addEventListener("click", function() {
-      window.location.href = "play.html" + getUidParam();
-    });
+    // Funkcija, kas uzliek "mākonis" efektu (dissolve) un pēc 1 sekundes pāradresē uz play.html.
+    function navigateToPlay() {
+      document.body.classList.add("cloud-dissolve");
+      setTimeout(() => {
+        window.location.href = "play.html" + getUidParam();
+      }, 1000);
+    }
     
-    document.getElementById("ne-button").addEventListener("click", function() {
-      window.location.href = "sad.html";
-    });
+    // Abām pogām pievienojam vienādu notikumu, lai vienmēr pārietu uz play.html.
+    document.getElementById("ja-button").addEventListener("click", navigateToPlay);
+    document.getElementById("ne-button").addEventListener("click", navigateToPlay);
   </script>
 </body>
 </html>
