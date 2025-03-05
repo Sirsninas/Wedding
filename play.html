@@ -90,10 +90,6 @@
       const qText = document.createElement("p");
       qText.classList.add("card-question-text");
       qText.innerText = q.text;
-      // For collapsed cards, hide text (overflow hidden)
-      if (!isActive) {
-        qText.style.overflow = "hidden";
-        qText.style.height = "0";
       }
       card.appendChild(qText);
       
