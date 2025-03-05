@@ -8,7 +8,7 @@
 </head>
 <body>
   <div id="cards-container" class="cards-container">
-    <!-- Kartītes tiks dinamiski ielādētas šeit -->
+    <!-- Kartiņas tiks dinamiski ielādētas šeit -->
   </div>
   <div id="finish-container" class="finish-container" style="display:none;">
     <button id="finish-btn" class="results-btn">Skatīt rezultātus</button>
@@ -19,7 +19,7 @@
     const uid = new URLSearchParams(window.location.search).get('uid') || "";
     let questions = [];
     let activeCardIndex = 0;
-    let deckExpanded = false;  // false: salauzta (collapsed), true: paplašināta (expanded)
+    let deckExpanded = false;
     
     // Iegūst jautājumus no Google Sheets
     function fetchQuestions() {
@@ -27,7 +27,7 @@
       fetch(url)
         .then(response => response.json())
         .then(data => {
-          questions = data.questions; // sagaidām: [{ row, text, answers:[...], selected }, ... ]
+          questions = data.questions; 
           renderCards();
         })
         .catch(error => console.error("Kļūda izgūstot jautājumus:", error));
@@ -43,8 +43,6 @@
         card.classList.add("question-card");
         card.dataset.index = index;
         
-        // Ja deck nav paplašināts (collapsed):
-        // Aktīvā kartiņa ir pilna, pārējās tiek rādītas ar vienu fiksētu offset (tikai to augšējā mala)
         if (!deckExpanded) {
           if (index === activeCardIndex) {
             card.classList.add("active-card");
@@ -52,7 +50,6 @@
             card.classList.add("collapsed-card");
           }
         } else {
-          // Ja deck ir paplašināts, visas kartiņas tiek parādītas pilnībā ar nelielu atstarpi
           card.classList.add("expanded-card");
         }
         
@@ -69,12 +66,11 @@
           const btn = document.createElement("button");
           btn.classList.add("card-answer-btn");
           btn.innerText = answer;
-          if (q.selected && q.selected === answer) {
+          if(q.selected && q.selected === answer) {
             btn.innerHTML = "❤️ " + answer;
           }
           btn.addEventListener("click", (e) => {
-            e.stopPropagation(); // novērš kartiņas klikšķa notikumu
-            // Ja deck ir paplašināts, tad izvēloties atbildi – tā arī aktivizē un kolapsē deck
+            e.stopPropagation();
             if (deckExpanded) {
               activeCardIndex = index;
               deckExpanded = false;
@@ -85,14 +81,12 @@
         });
         card.appendChild(answerContainer);
         
-        // Noklikšķinot uz kartiņas (bez tiešas atbildes pogas):
+        // Noklikšķinot uz neaktīvās kartiņas:
         card.addEventListener("click", () => {
-          // Ja deck nav paplašināts, tad klikšķis uz neaktīvās kartiņas paplašina deck
           if (!deckExpanded && index !== activeCardIndex) {
             deckExpanded = true;
             renderCards();
           } else if (deckExpanded && index !== activeCardIndex) {
-            // Ja deck ir paplašināts, noklikšķinot uz kartiņas, tā kļūst par aktīvo un deck kolapsē
             activeCardIndex = index;
             deckExpanded = false;
             renderCards();
@@ -105,12 +99,10 @@
       checkFinish();
     }
     
-    // Kad tiek izvēlēta atbilde
     function selectAnswer(cardIndex, selectedAnswer, buttonElem) {
       const q = questions[cardIndex];
       q.selected = selectedAnswer;
       
-      // Atjauno UI: noņem visu marķējumu un pievieno "❤️" izvēlētajai pogai
       const card = document.querySelector(`.question-card[data-index='${cardIndex}']`);
       const btns = card.querySelectorAll(".card-answer-btn");
       btns.forEach(btn => btn.innerHTML = btn.innerText);
@@ -118,10 +110,8 @@
       
       updateAnswer(q.row, selectedAnswer);
       
-      // Animācija: aktīvā kartiņa fade out (lēni izgaist kā mākonis)
       card.classList.add("card-fade-out");
       setTimeout(() => {
-        // Pēc animācijas, ja vēl ir nākamais jautājums, aktīvais tiek palielināts un deck tiek kolapsēts
         if (activeCardIndex < questions.length - 1) {
           activeCardIndex++;
         }
@@ -129,7 +119,6 @@
       }, 1000);
     }
     
-    // Nosūta POST pieprasījumu uz Google Sheets (bez no-cors)
     function updateAnswer(row, answer) {
       const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec";
       const data = { action: "updateAnswer", uid: uid, row: row, answer: answer };
@@ -139,8 +128,8 @@
         body: JSON.stringify(data)
       })
       .then(response => response.text())
-      .then(responseText => console.log("Atbilde ierakstīta: " + responseText))
-      .catch(error => console.error("Kļūda ierakstot atbildi:", error));
+      .then(responseText => console.log("Updated: " + responseText))
+      .catch(error => console.error("Error updating answer:", error));
     }
     
     function checkFinish() {
