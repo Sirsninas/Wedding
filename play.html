@@ -3,109 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Romantiskā Aptauja - Spēle</title>
+  <title>Romantiskā Aptauja – Kartiņas</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1 class="title">Mūsu Romantiskā Aptauja 💕</h1>
-    <div id="question-container" class="glass">
-      <p id="question-text"></p>
-      <div id="answer-buttons"></div>
-    </div>
+  <div id="cards-container" class="cards-container">
+    <!-- Kartiņas tiks dinamiski ielādētas šeit -->
+  </div>
+  <div id="finish-container" class="finish-container" style="display:none;">
+    <button id="finish-btn" class="results-btn">Skatīt rezultātus</button>
   </div>
   
   <script>
-    // Iegūst uid no URL, piemēram, play.html?uid=XYZ
+    // Iegūst uid no URL (piemēram, play.html?uid=XYZ)
     const uid = new URLSearchParams(window.location.search).get('uid') || "";
     
     let questions = [];
-    let currentQuestionIndex = 0;
+    let activeCardIndex = 0; // aktīvās kartiņas indekss
     
-    // Iegūst jautājumus un atbilžu variantus no Google Sheets, izmantojot jūsu Google Apps Script web app
+    // Iegūst jautājumus no Google Sheets, izmantojot jūsu Google Apps Script web app endpoint
     function fetchQuestions() {
-      const url = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec?action=getQuestions&uid=" + uid;
+      const url = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7T1ojVoCF43P1RgQ/exec?action=getQuestions&uid=" + uid;
       fetch(url)
         .then(response => response.json())
         .then(data => {
-          questions = data.questions; 
-          showQuestion();
+          questions = data.questions; // sagaidām struktūru: [ { row, text, answers:[...], selected }, ... ]
+          renderCards();
         })
-        .catch(error => console.error("Kļūda izgūstot jautājumus:", error));
+        .catch(error => console.error("Error fetching questions:", error));
     }
     
-    // Parāda pašreizējo jautājumu ar lielākiem elementiem
-    function showQuestion() {
-      const container = document.getElementById("question-container");
-      container.classList.remove("fade-in");
-      container.classList.remove("fade-out");
-      
-      const questionTextElem = document.getElementById("question-text");
-      const answerButtonsElem = document.getElementById("answer-buttons");
-      answerButtonsElem.innerHTML = ""; // notīra atbilžu pogas
-      
-      if (currentQuestionIndex < questions.length) {
-        const q = questions[currentQuestionIndex];
-        questionTextElem.innerText = q.text;
-        questionTextElem.style.fontSize = "2em";
-        // Katram atbilžu variantam izveido pogu ar palielinātu fontu
+    // Renderē visas kartiņas – aktīvā kartiņa ir pilna un redzama, pārējās minimizētas zemāk
+    function renderCards() {
+      const container = document.getElementById("cards-container");
+      container.innerHTML = "";
+      questions.forEach((q, index) => {
+        const card = document.createElement("div");
+        card.classList.add("question-card");
+        card.dataset.index = index;
+        // Atšķir aktīvo un neaktīvo kartiņu stilu
+        if (index === activeCardIndex) {
+          card.classList.add("active-card");
+        } else {
+          card.classList.add("inactive-card");
+        }
+        
+        // Kartiņas saturā – jautājuma teksts
+        const qText = document.createElement("p");
+        qText.classList.add("card-question-text");
+        qText.innerText = q.text;
+        card.appendChild(qText);
+        
+        // Atbilžu pogu konteiners
+        const answerContainer = document.createElement("div");
+        answerContainer.classList.add("card-answer-container");
         q.answers.forEach(answer => {
           const btn = document.createElement("button");
+          btn.classList.add("card-answer-btn");
           btn.innerText = answer;
-          btn.classList.add("answer-btn");
-          btn.addEventListener("click", () => {
-            selectAnswer(q, answer, btn);
+          // Ja šai kartiņai jau ir saglabāta atbilde, iezīmē izvēlēto variantu ar "❤️"
+          if(q.selected && q.selected === answer) {
+            btn.innerHTML = "❤️ " + answer;
+          }
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation(); // lai kartiņas klikšķi netiktu izsaukti
+            selectAnswer(index, answer, btn);
           });
-          answerButtonsElem.appendChild(btn);
+          answerContainer.appendChild(btn);
         });
-      } else {
-        // Ja jautājumi ir beigušies, parādām rezultātu pogu
-        questionTextElem.innerText = "Aptauja ir pabeigta!";
-        const resultsBtn = document.createElement("button");
-        resultsBtn.innerText = "Skatīt rezultātus";
-        resultsBtn.classList.add("results-btn");
-        resultsBtn.addEventListener("click", () => {
-          window.location.href = "results.html" + (uid ? ("?uid=" + uid) : "");
+        card.appendChild(answerContainer);
+        
+        // Klikšķis uz kartiņas – ja tā nav aktīva, tā kļūst par aktīvo
+        card.addEventListener("click", () => {
+          if (activeCardIndex !== index) {
+            setActiveCard(index);
+          }
         });
-        answerButtonsElem.appendChild(resultsBtn);
-      }
+        
+        container.appendChild(card);
+      });
+      checkFinish();
     }
     
-    // Funkcija, kas tiek izsaukta, kad tiek izvēlēta atbilde
-    function selectAnswer(question, selectedAnswer, buttonElem) {
-      // Marķē izvēlēto atbildi ar sirds emoji
-      question.selected = selectedAnswer;
-      const buttons = document.querySelectorAll("#answer-buttons .answer-btn");
-      buttons.forEach(btn => btn.innerHTML = btn.innerText);
+    // Atjauno aktīvās kartiņas indeksu un pārrenderē
+    function setActiveCard(index) {
+      activeCardIndex = index;
+      renderCards();
+    }
+    
+    // Kad tiek izvēlēta atbilde kartiņā
+    function selectAnswer(cardIndex, selectedAnswer, buttonElem) {
+      const q = questions[cardIndex];
+      q.selected = selectedAnswer;
+      
+      // Atjauno izvēlēto pogu vizuāli – pievieno sirds emoji
+      const card = document.querySelector(`.question-card[data-index='${cardIndex}']`);
+      const btns = card.querySelectorAll(".card-answer-btn");
+      btns.forEach(btn => btn.innerHTML = btn.innerText);
       buttonElem.innerHTML = "❤️ " + selectedAnswer;
       
-      updateAnswer(question.row, selectedAnswer);
+      // Nosūta atjauninājumu uz Google Sheets
+      updateAnswer(q.row, selectedAnswer);
       
-      // Pielieto fade out animāciju – jautājuma lodziņš izgaist kā mākonis, paceļoties uz augšu
-      const container = document.getElementById("question-container");
-      container.classList.add("fade-out");
-      
+      // Animācija: aktīvā kartiņa "izgaist" un pārvietojas uz augšu (fade out up)
+      card.classList.add("card-fade-out");
       setTimeout(() => {
-        currentQuestionIndex++;
-        container.classList.remove("fade-out");
-        container.classList.add("fade-in");
-        showQuestion();
+        // Pēc animācijas, ja vēl ir kartiņas, aktīvā kartiņas indeks tiek palielināts (vai, ja vēlams, var izvēlēties nākamo, kas nav atbildēta)
+        if (activeCardIndex < questions.length - 1) {
+          activeCardIndex++;
+        }
+        renderCards();
       }, 1000);
     }
     
-    // Nosūta POST pieprasījumu uz Google Sheets, lai atjauninātu izvēlēto atbildi
+    // Nosūta POST pieprasījumu, lai atjauninātu izvēlēto atbildi Google Sheets
     function updateAnswer(row, answer) {
-      const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec";
-      const data = { action: "updateAnswer", uid: uid, row: row, answer: answer };
+      const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7T1ojVoCF43P1RgQ/exec";
+      const data = {
+        action: "updateAnswer",
+        uid: uid,
+        row: row,
+        answer: answer
+      };
       fetch(updateUrl, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       }).then(() => {
-        console.log("Atbilde ierakstīta rindā " + row);
-      }).catch(error => console.error("Kļūda ierakstot atbildi:", error));
+        console.log("Answer updated at row " + row);
+      }).catch(error => console.error("Error updating answer:", error));
     }
+    
+    // Ja visi jautājumi ir atbildēti, parāda pogu uz rezultātiem
+    function checkFinish() {
+      const allAnswered = questions.every(q => q.selected && q.selected !== "");
+      const finishContainer = document.getElementById("finish-container");
+      if (allAnswered) {
+        finishContainer.style.display = "block";
+      } else {
+        finishContainer.style.display = "none";
+      }
+    }
+    
+    // Finish pogas klikšķis
+    document.getElementById("finish-btn").addEventListener("click", () => {
+      window.location.href = "results.html" + (uid ? ("?uid=" + uid) : "");
+    });
     
     fetchQuestions();
   </script>
