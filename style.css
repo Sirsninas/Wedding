@@ -24,78 +24,43 @@ body {
   color: #555;
 }
 
-/* Sirds pogu konteineris */
+/* Pogu konteineri */
 .button-container {
   display: flex;
   justify-content: center;
   gap: 50px;
   margin-top: 50px;
-  perspective: 1000px;
 }
 
-/* Kopējais sirds konteineru stils */
-.heart-container {
+/* Katram 3D modeļa pogas konteinerim */
+.model-button {
+  width: 150px;
+  height: 150px;
+  cursor: pointer;
+  perspective: 800px;
   position: relative;
-  width: 120px;
-  height: 110px;
-  transform-style: preserve-3d;
 }
 
-/* SVG sirds stils */
-.heart-svg {
+.model-container {
   width: 100%;
-  height: auto;
-  transform-origin: center;
+  height: 100%;
+  background: transparent;
+  border: 2px solid transparent;
+  transition: transform 0.3s;
 }
 
-/* "JĀ" poga: reālā 3D animācija – griešanās ap Z asi */
-.heart-container.yes .heart-svg {
-  animation: rotateZ 3s linear infinite;
+.model-button:hover .model-container {
+  transform: translateY(-10px);
 }
 
-@keyframes rotateZ {
-  from { transform: rotateZ(0deg); }
-  to { transform: rotateZ(360deg); }
-}
-
-/* "JĀ" pogas uzraksts */
-.heart-label {
+.button-label {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
+  bottom: -30px;
+  width: 100%;
+  text-align: center;
   font-size: 1.5em;
-  font-weight: bold;
-  pointer-events: none;
-}
-
-/* "NĒ" poga: elegantāka 3D sirds ar smalku pulsējošu animāciju */
-.heart-container.no .heart-svg {
-  animation: pulse 2s ease-in-out infinite;
-  fill: #808080;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-/* "NĒ" pogas uzrakstu konteiners */
-.heart-label-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  gap: 10px;
-  pointer-events: none;
-}
-
-.heart-half {
-  color: white;
-  font-size: 1.5em;
-  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 3px #000;
 }
 
 /* Aptaujas lapas stili (play.html) */
