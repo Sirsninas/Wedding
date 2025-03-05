@@ -7,15 +7,15 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Fixed header at the very top -->
+  <!-- Fixed header -->
   <header class="page-header">
     <h1>Būtiskie jautājumi</h1>
   </header>
   
-  <!-- Active card container: appears below the header -->
+  <!-- Active card container: shows the current active question in full -->
   <div id="active-card-container" class="active-card-container"></div>
   
-  <!-- Deck container: holds collapsed cards at the bottom -->
+  <!-- Deck container: holds collapsed (answered) cards at the bottom -->
   <div id="deck-container" class="deck-container"></div>
   
   <!-- Finish container: appears when all questions are answered -->
@@ -24,10 +24,10 @@
   </div>
   
   <script>
-    // Get UID from URL (e.g. play.html?uid=XYZ)
+    // Get uid from URL (e.g., play.html?uid=XYZ)
     const uid = new URLSearchParams(window.location.search).get('uid') || "";
     let questions = [];
-    // activeCardIndex: index of the first unanswered (active) card.
+    // activeCardIndex points to the first unanswered card.
     let activeCardIndex = 0;
     
     // Fetch questions from Google Sheets via your Google Apps Script web app
@@ -37,28 +37,31 @@
         .then(response => response.json())
         .then(data => {
           questions = data.questions; // Expected: array of { row, text, answers:[...], selected }
+          // Set activeCardIndex to first unanswered question
+          activeCardIndex = questions.findIndex(q => !q.selected || q.selected === "") 
+                            === -1 ? questions.length : questions.findIndex(q => !q.selected || q.selected === "");
           renderDeck();
         })
         .catch(error => console.error("Kļūda izgūstot jautājumus:", error));
     }
     
-    // Render deck: active card in active container; all answered (collapsed) cards are stacked in the deck.
+    // Render the deck: active card in active container; all answered (collapsed) cards in deck container.
     function renderDeck() {
       const activeContainer = document.getElementById("active-card-container");
       const deckContainer = document.getElementById("deck-container");
       activeContainer.innerHTML = "";
       deckContainer.innerHTML = "";
       
-      // Render active card (if exists)
+      // Render active card if exists
       if (activeCardIndex < questions.length) {
         const activeCard = createCard(questions[activeCardIndex], activeCardIndex, true);
         activeContainer.appendChild(activeCard);
       }
       
-      // Render collapsed cards for answered questions (indices 0 to activeCardIndex-1)
+      // Render collapsed cards for answered questions (indices 0 .. activeCardIndex-1)
       for (let i = 0; i < activeCardIndex; i++) {
         const collapsedCard = createCard(questions[i], i, false);
-        // Shift each collapsed card slightly to the right (approx. 10px per card)
+        // Shift each collapsed card slightly to the right (3mm ~ 10px per card)
         collapsedCard.style.left = (10 * i) + "px";
         deckContainer.appendChild(collapsedCard);
       }
@@ -66,8 +69,7 @@
       checkFinish();
     }
     
-    // Create a card element.
-    // isActive true: full active card; false: collapsed card.
+    // Create a card element. isActive = true means full active card; false means collapsed.
     function createCard(q, index, isActive) {
       const card = document.createElement("div");
       card.classList.add("question-card");
@@ -95,8 +97,9 @@
         if (q.selected && q.selected === answer) {
           btn.innerHTML = "❤️ " + answer;
         }
+        // Only allow answer selection on active card
         btn.addEventListener("click", (e) => {
-          e.stopPropagation(); // Prevent card click event
+          e.stopPropagation();
           if (isActive) {
             selectAnswer(index, answer, btn);
           }
@@ -105,13 +108,23 @@
       });
       card.appendChild(answerContainer);
       
-      // Tapping on a collapsed card expands it.
+      // When tapping on a collapsed card, expand it (make it active)
       card.addEventListener("click", () => {
         if (!isActive) {
           activeCardIndex = index;
           renderDeck();
         }
       });
+      
+      // Add hover effect: if card is collapsed, when hovered it increases its max-height to reveal more content.
+      if (!isActive) {
+        card.addEventListener("mouseover", () => {
+          card.classList.add("collapsed-card-hover");
+        });
+        card.addEventListener("mouseout", () => {
+          card.classList.remove("collapsed-card-hover");
+        });
+      }
       
       return card;
     }
@@ -131,10 +144,10 @@
       
       updateAnswer(q.row, selectedAnswer);
       
-      // Animate active card sliding down (using fade effect)
-      activeCard.classList.add("card-fade-out");
+      // Animate the active card sliding down off-screen with a fade (simulate full collapse)
+      activeCard.classList.add("card-slide-down-out");
       setTimeout(() => {
-        // After animation, the answered card moves into the deck and the next unanswered card becomes active.
+        // After animation, move the active card into the deck (by incrementing activeCardIndex)
         if (activeCardIndex < questions.length - 1) {
           activeCardIndex++;
         }
