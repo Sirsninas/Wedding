@@ -127,7 +127,7 @@ body {
   filter: blur(8px);
 }
 
-/* Konteiners kartiņām */
+/* Konteiners, kur atrodas visas kartiņas */
 .cards-container {
   max-width: 800px;
   margin: 40px auto;
@@ -135,7 +135,7 @@ body {
   position: relative;
 }
 
-/* Jautājumu kartiņas – Apple Wallet stilā */
+/* Jautājumu kartiņas – stilizētas kā Apple Wallet kartiņas */
 .question-card {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
@@ -157,7 +157,7 @@ body {
   z-index: 1;
 }
 
-/* Animācija – aktīvā kartiņa fade out uz augšu */
+/* Fade out animācija – aktīvā kartiņa izgaist uz augšu */
 @keyframes cardFadeOutUp {
   0% {
     opacity: 1;
@@ -179,7 +179,7 @@ body {
   color: #333;
 }
 
-/* Atbilžu pogu konteiners */
+/* Atbilžu pogu konteiners kartiņās */
 .card-answer-container {
   display: flex;
   flex-wrap: wrap;
