@@ -113,7 +113,7 @@ body {
 /* ==========================
    Play lapas un citu lapu stili
    ========================== */
-/* Global fona gradienta pāreja no mīksta rozā līdz baltam */
+/* Global Styles for the Play Page */
 body {
   margin: 0;
   padding: 0;
@@ -127,7 +127,7 @@ body {
   filter: blur(8px);
 }
 
-/* Konteiners, kur atrodas kartiņas */
+/* Container for deck (cards) */
 .cards-container,
 #cards-container {
   max-width: 800px;
@@ -136,7 +136,27 @@ body {
   position: relative;
 }
 
-/* Jautājumu kartiņas – Apple Wallet stilā */
+/* Active card container is rendered separately (above the deck) */
+#active-card-container {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  z-index: 3;
+}
+
+/* Deck container (collapsed cards) fixed at bottom */
+#deck-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 10px;
+}
+
+/* Question Card Styles */
 .question-card {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
@@ -150,29 +170,29 @@ body {
   position: relative;
 }
 
-/* Aktīvā kartiņa pilnībā redzama */
+/* Active card: fully visible */
 .active-card {
   transform: translateY(0);
   opacity: 1;
   z-index: 2;
 }
 
-/* Neaktīvās kartiņas – saglabā tikai augšējo daļu redzamu (piemēram, 50px augstu) */
+/* Collapsed card: only top portion visible (50px height) and offset horizontally */
 .collapsed-card {
-  transform: translateY( calc(100% - 50px) );
+  transform: translateY(calc(100% - 50px));
   opacity: 0.7;
   z-index: 1;
 }
 
-/* Ja deck ir paplašināts (expanded), visas kartiņas redzamas pilnībā ar atstarpi */
+/* Expanded card (if deck is fully expanded) */
 .expanded-card {
-  margin-bottom: 20px;
   transform: translateY(0);
   opacity: 1;
   z-index: 1;
+  margin-bottom: 20px;
 }
 
-/* Animācija – aktīvā kartiņa fade out uz augšu */
+/* Fade out animation for active card */
 @keyframes cardFadeOutUp {
   0% {
     opacity: 1;
@@ -187,14 +207,14 @@ body {
   animation: cardFadeOutUp 1s forwards;
 }
 
-/* Kartiņas jautājuma teksts */
+/* Card question text */
 .card-question-text {
   font-size: 2em;
   margin-bottom: 20px;
   color: #333;
 }
 
-/* Atbilžu pogu konteiners kartiņās */
+/* Answer button container */
 .card-answer-container {
   display: flex;
   flex-wrap: wrap;
@@ -202,7 +222,7 @@ body {
   justify-content: center;
 }
 
-/* Lielas atbilžu pogas */
+/* Answer button style */
 .card-answer-btn {
   flex: 1 1 40%;
   min-width: 150px;
@@ -219,7 +239,7 @@ body {
   background: rgba(255, 255, 255, 0.7);
 }
 
-/* Rezultātu pogas stils */
+/* Results button style */
 .results-btn {
   display: block;
   width: 90%;
@@ -237,7 +257,7 @@ body {
   background: #b8336a;
 }
 
-/* Finish pogas konteiners */
+/* Finish container */
 .finish-container {
   text-align: center;
   margin: 30px auto;
