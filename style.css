@@ -140,10 +140,10 @@ html, body {
   font-size: 2rem;
 }
 
-/* Active Card Container: below header, centered */
+/* Active Card Container */
 .active-card-container {
   position: fixed;
-  top: 15%; /* Adjust as needed */
+  top: 15%; /* Below header */
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -152,7 +152,7 @@ html, body {
   padding: 1rem;
 }
 
-/* Deck Container: fixed at bottom */
+/* Deck Container: fixed at bottom, horizontal scrolling if needed */
 .deck-container,
 #deck-container {
   position: fixed;
@@ -164,28 +164,6 @@ html, body {
   gap: 0.25rem;
   padding: 0.5rem;
   overflow-x: auto;
-}
-
-/* Deck Toggle Button (to switch between stacked and expanded modes) */
-.deck-toggle {
-  position: fixed;
-  bottom: 5%;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-}
-.deck-toggle button {
-  padding: 0.75rem 1.5rem;
-  font-size: 1.25rem;
-  border: none;
-  border-radius: 0.75rem;
-  background: #b8336a;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.deck-toggle button:hover {
-  background: #a12350;
 }
 
 /* Question Card Styles */
@@ -210,9 +188,12 @@ html, body {
   z-index: 2;
 }
 
-/* Deck card: in stacked mode, default is collapsed to 20px height */
+/* Deck card: answered cards in the deck (70% size relative to active card) */
 .deck-card {
-  max-height: 20px; /* About 5mm */
+  width: 70%;
+  max-width: 560px; /* 70% of 800px */
+  margin: 0 auto;
+  max-height: 20px;  /* About 5mm visible by default */
   opacity: 0.7;
   z-index: 1;
   position: relative;
@@ -220,10 +201,10 @@ html, body {
   transition: max-height 0.3s ease, transform 0.3s ease;
 }
 
-/* When deck card is hovered/touched, lift it (by 100px) and slightly scale */
+/* When deck card is hovered or touched, it lifts by 100px and scales slightly */
 .deck-card:hover,
 .deck-card-lift {
-  max-height: 120px; /* Reveal more text */
+  max-height: 120px;
   transform: translateY(-100px) scaleY(1.05);
 }
 
@@ -297,7 +278,6 @@ html, body {
   text-align: center;
   margin: 1.875rem auto;
 }
-
 
 /* ==========================
    Sad lapas (vai citu vienkāršu lapu) stili
