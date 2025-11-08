@@ -1,213 +1,30 @@
 <!DOCTYPE html>
 <html lang="lv">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Romantiskā Aptauja – Kartiņas</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#c4b5fd" />
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <!-- Fixed Header -->
-  <header class="page-header">
+<body class="page-play">
+  <header class="page-header" role="banner">
     <h1>Būtiskie jautājumi</h1>
   </header>
 
-  <!-- Active Card Container (centered below header) -->
-  <div id="active-card-container" class="active-card-container"></div>
+  <main id="main" class="page-main" role="main">
+    <!-- Aktīvā kartīte -->
+    <section id="active-card-container" class="active-card-container" aria-live="polite" aria-label="Aktīvā kartīte"></section>
 
-  <!-- Deck Container: shows all answered (inactive) cards horizontally -->
-  <div id="deck-container" class="deck-container"></div>
+    <!-- Atbildētās kartītes -->
+    <section id="deck-container" class="deck-container" aria-label="Atbildētās kartītes"></section>
 
-  <!-- Finish Container: "Skatīt rezultātus" button appears when all questions are answered -->
-  <div id="finish-container" class="finish-container" style="display: none;">
-    <button id="finish-btn" class="results-btn">Skatīt rezultātus</button>
-  </div>
+    <!-- Pabeigšanas poga -->
+    <div id="finish-container" class="finish-container" hidden>
+      <button id="finish-btn" class="results-btn" type="button">Skatīt rezultātus</button>
+    </div>
+  </main>
 
-  <script>
-  (function(){
-    const uid = new URLSearchParams(window.location.search).get('uid') || "";
-    let questions = [];
-    let activeCardIndex = 0; // Index of first unanswered question (active)
-    // deckLiftedStatus tracks whether a deck card is “lifted” by hover/touch
-    const deckLiftedStatus = {};
-
-    // Fetch questions from Google Apps Script
-    function fetchQuestions() {
-      const url = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec?action=getQuestions&uid=" + uid;
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          questions = data.questions;
-          // Find the first unanswered question; if none, leave activeCardIndex equal to questions.length (meaning no active card)
-          let idx = questions.findIndex(q => !q.selected || q.selected === "");
-          activeCardIndex = (idx === -1) ? questions.length : idx;
-          renderPage();
-        })
-        .catch(error => console.error("Error fetching questions:", error));
-    }
-
-    // Render both active card and deck
-    function renderPage() {
-      renderActiveCard();
-      renderDeck();
-      checkFinish();
-    }
-
-    // Render the active card (if any)
-    function renderActiveCard() {
-      const activeContainer = document.getElementById("active-card-container");
-      activeContainer.innerHTML = "";
-      // Only render an active card if there is an unanswered question
-      if (activeCardIndex < questions.length) {
-        const activeCard = createCard(questions[activeCardIndex], activeCardIndex, true);
-        // Apply a fade-in animation for active cards
-        activeCard.classList.add("card-fade-in");
-        activeContainer.appendChild(activeCard);
-      }
-    }
-
-    // Render deck: all answered cards (for this UID), in sheet order
-    function renderDeck() {
-      const deckContainer = document.getElementById("deck-container");
-      deckContainer.innerHTML = "";
-      // Filter answered questions (regardless of active card)
-      const answered = questions.filter(q => q.selected && q.selected !== "");
-      answered.forEach((q, i) => {
-        const deckCard = createCard(q, i, false);
-        // In deck mode, set a fixed width so full question text is visible
-        deckCard.style.width = "90%";
-        deckCard.style.maxWidth = "800px";
-        deckCard.style.height = "40px"; // Fixed height
-        deckCard.style.flexShrink = "0";
-        deckCard.style.marginRight = "10px";
-        deckContainer.appendChild(deckCard);
-      });
-    }
-
-    // Create a card element. isActive true → active card; false → deck card.
-    function createCard(q, index, isActive) {
-      const card = document.createElement("div");
-      card.classList.add("question-card");
-      card.dataset.index = index;
-      if (isActive) {
-        card.classList.add("active-card");
-      } else {
-        card.classList.add("deck-card");
-      }
-
-      // Create question text element
-      const qText = document.createElement("p");
-      qText.classList.add("card-question-text");
-      qText.innerText = q.text;
-      // Active card uses standard font size; deck card uses a smaller font
-      if (!isActive) {
-        qText.style.fontSize = "1.2rem";
-      }
-      card.appendChild(qText);
-
-      // Create answer container element
-      const answerContainer = document.createElement("div");
-      answerContainer.classList.add("card-answer-container");
-      q.answers.forEach(answer => {
-        const btn = document.createElement("button");
-        btn.classList.add("card-answer-btn");
-        btn.innerText = answer;
-        if (q.selected && q.selected === answer) {
-          btn.innerHTML = "❤️ " + answer;
-        }
-        // Only active card allows answer selection
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          if (isActive) {
-            selectAnswer(activeCardIndex, answer, btn);
-          }
-        });
-        answerContainer.appendChild(btn);
-      });
-      card.appendChild(answerContainer);
-
-      // For deck cards, add hover/touch listeners so that they “lift” (animate upward) but do not auto-activate
-      if (!isActive) {
-        card.addEventListener("mouseenter", () => {
-          card.classList.add("deck-card-lift");
-          deckLiftedStatus[index] = true;
-        });
-        card.addEventListener("mouseleave", () => {
-          card.classList.remove("deck-card-lift");
-          deckLiftedStatus[index] = false;
-        });
-        card.addEventListener("touchstart", () => {
-          card.classList.add("deck-card-lift");
-          deckLiftedStatus[index] = true;
-        }, { passive: true });
-        card.addEventListener("touchend", () => {
-          card.classList.remove("deck-card-lift");
-          if (deckLiftedStatus[index]) {
-            // Only activate if deliberately tapped while lifted
-            activeCardIndex = index;
-            renderPage();
-          }
-          deckLiftedStatus[index] = false;
-        }, { passive: true });
-        // Desktop: require a second click if card is lifted
-        card.addEventListener("click", () => {
-          if (card.classList.contains("deck-card-lift")) {
-            activeCardIndex = index;
-            renderPage();
-          }
-        });
-      }
-
-      return card;
-    }
-
-    // When an answer is selected on the active card
-    function selectAnswer(cardIndex, selectedAnswer, buttonElem) {
-      const q = questions[cardIndex];
-      q.selected = selectedAnswer;
-      const activeCard = document.querySelector("#active-card-container .question-card");
-      if (activeCard) {
-        const btns = activeCard.querySelectorAll(".card-answer-btn");
-        btns.forEach(btn => btn.innerHTML = btn.innerText);
-        buttonElem.innerHTML = "❤️ " + selectedAnswer;
-      }
-      updateAnswer(q.row, selectedAnswer);
-      // Animate active card: fade out and slide down into the deck.
-      activeCard.classList.add("card-slide-down-out");
-      setTimeout(() => {
-        if (activeCardIndex < questions.length - 1) {
-          activeCardIndex++;
-        }
-        renderPage();
-      }, 1000);
-    }
-
-    // Sends a POST request to update the answer (using no-cors mode)
-    function updateAnswer(row, answer) {
-      const updateUrl = "https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec";
-      const data = { action: "updateAnswer", uid: uid, row: row, answer: answer };
-      fetch(updateUrl, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      })
-      .then(() => console.log("Answer updated in row " + row))
-      .catch(error => console.error("Error updating answer:", error));
-    }
-
-    function checkFinish() {
-      const allAnswered = questions.every(q => q.selected && q.selected !== "");
-      const finishContainer = document.getElementById("finish-container");
-      finishContainer.style.display = allAnswered ? "block" : "none";
-    }
-
-    document.getElementById("finish-btn").addEventListener("click", () => {
-      window.location.href = "results.html" + (uid ? ("?uid=" + uid) : "");
-    });
-
-    fetchQuestions();
-  })();
-  </script>
+  <script type="module" src="script.js" defer></script>
 </body>
 </html>
