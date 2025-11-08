@@ -1,307 +1,321 @@
 /* ==========================
-   Globalie stili
+   Pamatstili un mainīgie
    ========================== */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Georgia', serif;
-  background: linear-gradient(to bottom, #fff0f5, #ffffff);
-  overflow-x: hidden;
+:root{
+  --bg-1:#fff7fb;
+  --bg-2:#ffffff;
+  --ink:#2b2b2b;
+  --muted:#6b7280;
+  --brand:#d17c9c;     /* rožains */
+  --brand-2:#8b5cf6;   /* violets headerim */
+  --ok:#22c55e;
+  --err:#ef4444;
+  --glass: rgba(255,255,255,.35);
+  --glass-strong: rgba(255,255,255,.6);
+  --radius: 14px;
+  --shadow: 0 10px 30px rgba(0,0,0,.15);
+  --t: 220ms cubic-bezier(.22,.61,.36,1);
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg-1:#0f1020;
+    --bg-2:#0a0b14;
+    --ink:#e8eef6;
+    --muted:#9fb0c7;
+    --brand:#f0a4c1;
+    --brand-2:#a78bfa;
+    --glass: rgba(255,255,255,.08);
+    --glass-strong: rgba(255,255,255,.12);
+    --shadow: 0 12px 36px rgba(0,0,0,.45);
+  }
+}
+
+*{box-sizing:border-box}
+
+html, body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+}
+
+body{
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Noto Sans", sans-serif;
+  color: var(--ink);
+  background: linear-gradient(to bottom, var(--bg-1), var(--bg-2));
+  overflow-x:hidden;
   transition: opacity 1s ease, filter 1s ease;
 }
 
-/* Pārejas efekts – visa lapa izgaist kā mākonis (blur + caurspīdība) */
-.cloud-dissolve {
-  opacity: 0;
+/* Globālais mākonis (lapas aizvēršanas) efekts */
+.cloud-dissolve{
+  opacity:.0;
   filter: blur(8px);
 }
 
+/* Fokusam akcentēts kontūrs */
+:focus-visible{
+  outline: 3px solid var(--brand-2);
+  outline-offset: 2px;
+}
+
 /* ==========================
-   Index lapas stili
+   Index
    ========================== */
-.content-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
+.content-container{
+  min-height: 100svh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding: clamp(16px, 4vw, 40px);
+  gap: 16px;
 }
 
-.intro-title {
-  font-size: 3em;
-  color: #d17c9c;
-  margin-bottom: 10px;
+.intro-title{
+  font-size: clamp(28px, 4.2vw, 48px);
+  color: var(--brand);
+  margin: 0 0 6px 0;
+  line-height: 1.1;
 }
 
-.intro-text {
-  font-size: 1.5em;
-  color: #555;
-  margin-bottom: 40px;
+.intro-text{
+  font-size: clamp(18px, 2.4vw, 24px);
+  color: var(--muted);
+  max-width: 900px;
+  margin: 0 auto 28px auto;
 }
 
-/* Sirds pogu konteiners – izvietots zem teksta, blakus */
-.hearts-container {
-  display: flex;
-  gap: 60px;
-  justify-content: center;
-  align-items: center;
+/* Pogas ar emoji */
+.hearts-container{
+  display:flex;
+  gap: clamp(32px, 6vw, 72px);
+  justify-content:center;
+  align-items:center;
+  flex-wrap: wrap;
 }
 
-/* Emoji pogu stils – palielināts izmērs, animācijas */
-.emoji-button {
-  width: 200px;
-  height: 200px;
-  cursor: pointer;
+.emoji-button{
+  width: clamp(140px, 20vw, 200px);
+  height: clamp(140px, 20vw, 200px);
   position: relative;
-  transition: transform 0.3s ease;
+  display:grid;
+  place-items:center;
+  border: none;
+  background: var(--glass);
+  backdrop-filter: blur(8px);
+  border-radius: 24px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform var(--t), background var(--t);
+}
+.emoji-button:hover{ transform: translateY(-8px) scale(1.02); }
+.emoji-button:active{ transform: translateY(0) scale(.98); }
+.emoji-button:focus-visible{ box-shadow: 0 0 0 4px rgba(139,92,246,.35), var(--shadow); }
+
+.button-label{
+  position:absolute;
+  bottom: -36px;
+  width:100%;
+  font-size: clamp(18px, 2.4vw, 24px);
+  color: var(--ink);
+  opacity:.9;
 }
 
-.emoji-button:hover {
-  transform: translateY(-10px);
+/* Emoji kustības */
+.emoji-content{
+  font-size: clamp(56px, 8vw, 88px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100%;
 }
 
-.button-label {
-  position: absolute;
-  bottom: -40px;
-  width: 100%;
-  font-size: 2em;
-  color: #fff;
-  text-shadow: 1px 1px 3px #000;
+.ja-emoji{ animation: happyJump 3s ease-in-out infinite; }
+@keyframes happyJump{
+  0%{ transform: translateY(0) rotate(0deg); }
+  20%{ transform: translateY(-24px) rotate(10deg); }
+  40%{ transform: translateY(0) rotate(0deg); }
+  60%{ transform: translateY(-16px) rotate(-10deg); }
+  80%{ transform: translateY(0) rotate(6deg); }
+  100%{ transform: translateY(0) rotate(0deg); }
 }
 
-.emoji-content {
-  font-size: 7em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+.ne-emoji{ animation: sadPulse 2.2s ease-in-out infinite; transition: transform 1s ease, opacity 1s ease; }
+@keyframes sadPulse{
+  0%{ transform: scale(1); }
+  50%{ transform: scale(.95); }
+  100%{ transform: scale(1); }
 }
+.ne-emoji.collapsed{ transform: scaleY(.35); opacity:.5; }
 
-/* "JĀ" sirds – priecīga animācija ar lēcieniem un maināmām rotācijām */
-.ja-emoji {
-  animation: happyJump 3s ease-in-out infinite;
-}
-
-@keyframes happyJump {
-  0%   { transform: translateY(0) rotate(0deg); }
-  20%  { transform: translateY(-30px) rotate(15deg); }
-  40%  { transform: translateY(0) rotate(0deg); }
-  60%  { transform: translateY(-20px) rotate(-15deg); }
-  80%  { transform: translateY(0) rotate(10deg); }
-  100% { transform: translateY(0) rotate(0deg); }
-}
-
-/* "NĒ" sirds – sākotnēji pulsēšana; kad nospiesta, paliek samazināta pēc augstuma */
-.ne-emoji {
-  animation: sadPulse 2s ease-in-out infinite;
-  transition: transform 1s ease, opacity 1s ease;
-}
-
-@keyframes sadPulse {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(0.95); }
-  100% { transform: scale(1); }
-}
-
-.ne-emoji.collapsed {
-  transform: scaleY(0.3);
-  opacity: 0.5;
+@media (prefers-reduced-motion: reduce){
+  .ja-emoji, .ne-emoji{ animation: none !important; }
 }
 
 /* ==========================
-   Play lapas un citu lapu stili
+   Play
    ========================== */
-/* Global Styles */
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Georgia', serif;
-  overflow-x: hidden;
-  transition: opacity 1s ease, filter 1s ease;
-  min-height: 100vh;
-}
-
-/* Page Header */
-.page-header {
-  position: fixed;
+.page-header{
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(150,120,190,0.8);
-  color: #fff;
-  text-align: center;
-  padding: 1rem;
-  z-index: 4;
+  background: color-mix(in oklab, var(--brand-2) 80%, black 0%);
+  color:#fff;
+  text-align:center;
+  padding: 14px 10px;
+  z-index: 10;
+  box-shadow: 0 6px 20px rgba(0,0,0,.15);
 }
-.page-header h1 {
-  margin: 0;
-  font-size: 2rem;
-}
-
-/* Active Card Container */
-.active-card-container {
-  position: fixed;
-  top: 15%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 800px;
-  z-index: 3;
-  padding: 1rem;
+.page-header h1{
+  margin:0;
+  font-weight: 700;
+  font-size: clamp(18px, 2.6vw, 28px);
 }
 
-/* Deck Container */
-.deck-container,
-#deck-container {
-  position: fixed;
+.page-main{
+  display:grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 10px;
+  padding-inline: clamp(10px, 4vw, 20px);
+}
+
+/* Aktīvā kartīte */
+.active-card-container{
+  margin: 12px auto 0 auto;
+  width: min(900px, 96%);
+  z-index: 2;
+  padding: 4px;
+}
+
+/* Deck (horizontāla josla apakšā) */
+.deck-container{
+  position: sticky;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 20vh; /* Adjust height as needed */
-  z-index: 2;
-  display: flex;
-  gap: 0.25rem;
-  padding: 0.5rem;
+  height: clamp(56px, 18svh, 160px);
+  display:flex;
+  gap: 8px;
+  padding: 8px;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
+  align-items: center;
 }
 
-/* Question Card (common styles) */
-.question-card {
-  background: rgba(255,255,255,0.2);
+/* Kartītes kopējais stils */
+.question-card{
+  background: var(--glass);
   backdrop-filter: blur(10px);
-  border-radius: 1rem;
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
   margin: 0 auto;
-  padding: 1.5rem;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  cursor: pointer;
-  width: 90%;
-  max-width: 800px;
-  overflow: hidden;
+  padding: clamp(14px, 2.2vw, 22px);
+  transition: opacity var(--t), transform var(--t), background var(--t);
+  width: 100%;
+  max-width: 900px;
   position: relative;
   scroll-snap-align: center;
 }
 
-/* Active Card: fully visible */
-.active-card {
+/* Aktīvā */
+.active-card{
   opacity: 1;
-  z-index: 2;
 }
 
-/* Deck Card: for answered cards in the deck */
-.deck-card {
-  width: 90%; /* Full width to show complete question */
-  max-width: 800px;
-  margin: 0 auto;
-  height: 40px; /* Fixed height */
-  opacity: 0.7;
-  z-index: 1;
-  position: relative;
+/* Deck kartītes (kompaktas) */
+.deck-card{
+  width: min(86vw, 760px);
+  height: 48px;
+  flex: 0 0 auto;
+  opacity: .85;
   overflow: hidden;
-  transition: all 0.5s ease;
-  scroll-snap-align: center;
-  font-size: 1rem; /* Reduced font size */
-}
-
-/* When a deck card is centered (via scroll snap), it expands */
-.expanded-deck-card {
-  width: 95%;
-  max-width: 760px;
-  height: 80px;
-  transform: perspective(1000px) rotateY(10deg);
-  font-size: 1rem;
-}
-
-/* Fade-in animation for active cards (re-fade) */
-@keyframes cardFadeIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-.card-fade-in {
-  animation: cardFadeIn 0.5s forwards;
-}
-
-/* Slide down-out animation for active card when answered */
-@keyframes cardSlideDownOut {
-  0% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(100vh);
-  }
-}
-.card-slide-down-out {
-  animation: cardSlideDownOut 1s forwards;
-}
-
-/* Card Question Text */
-.card-question-text {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-/* Answer Container */
-.card-answer-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  display:flex;
+  align-items:center;
   justify-content: center;
 }
+.deck-card:hover{ background: var(--glass-strong); }
+.deck-card-lift{ transform: translateY(-6px); }
 
-/* Answer Button */
-.card-answer-btn {
-  flex: 1 1 40%;
-  min-width: 150px;
-  padding: 0.75rem;
-  font-size: 1.25rem;
+/* Animācijas */
+@keyframes cardFadeIn{
+  0%{ opacity:0; transform: scale(.96); }
+  100%{ opacity:1; transform: scale(1); }
+}
+.card-fade-in{ animation: cardFadeIn .45s forwards; }
+
+@keyframes cardSlideDownOut{
+  0%{ opacity:1; transform: translateY(0); }
+  100%{ opacity:0; transform: translateY(60vh); }
+}
+.card-slide-down-out{ animation: cardSlideDownOut 1s forwards; }
+
+.card-question-text{
+  font-size: clamp(18px, 2.4vw, 24px);
+  margin: 0 0 14px 0;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.card-answer-container{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content:center;
+}
+
+.card-answer-btn{
+  flex: 1 1 240px;
+  padding: 12px 14px;
+  font-size: clamp(16px, 2.1vw, 18px);
   border: none;
-  border-radius: 0.625rem;
-  background: rgba(255,255,255,0.4);
-  transition: transform 0.3s ease, background 0.3s ease;
+  border-radius: 10px;
+  background: var(--glass-strong);
   cursor: pointer;
+  transition: transform var(--t), background var(--t), box-shadow var(--t);
 }
-.card-answer-btn:hover {
-  transform: translateY(-0.5rem);
-  background: rgba(255,255,255,0.7);
-}
+.card-answer-btn:hover{ transform: translateY(-6px); }
+.card-answer-btn:active{ transform: translateY(0) scale(.98); }
+.card-answer-btn:focus-visible{ box-shadow: 0 0 0 4px rgba(139,92,246,.35); }
 
-/* Results Button */
-.results-btn {
-  display: block;
-  width: 90%;
-  margin: 1.25rem auto;
-  padding: 1rem;
-  background: #d17c9c;
-  color: #fff;
+/* Pabeigšanas poga */
+.finish-container{
+  margin: 16px auto 24px auto;
+  text-align:center;
+}
+.results-btn{
+  display: inline-block;
+  min-width: 220px;
+  padding: 14px 18px;
+  background: var(--brand);
+  color:#fff;
   border: none;
-  border-radius: 0.75rem;
-  font-size: 1.25rem;
+  border-radius: 12px;
+  font-size: 18px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background var(--t), transform var(--t);
+  box-shadow: var(--shadow);
 }
-.results-btn:hover {
-  background: #b8336a;
-}
+.results-btn:hover{ transform: translateY(-3px); }
+.results-btn:active{ transform: translateY(0); }
 
-/* Finish Container */
-.finish-container {
-  text-align: center;
-  margin: 1.875rem auto;
-}
 /* ==========================
-   Sad lapas (vai citu vienkāršu lapu) stili
+   Sad
    ========================== */
-/* Ja nepieciešams, pielāgojat arī vienkāršu lapu stilus – piemēram, sad.html var izmantot globalos stilus */
+.intro-container{
+  min-height: 100svh;
+  display:grid;
+  place-items:center;
+  padding: 20px;
+  text-align:center;
+}
+
+/* ==========================
+   Pieejamība + kustību samazināšana
+   ========================== */
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
