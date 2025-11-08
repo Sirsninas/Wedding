@@ -1,68 +1,33 @@
 <!DOCTYPE html>
 <html lang="lv">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mīlestības Iepazīšanās</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#e9d5ff" />
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <div class="content-container">
-    <!-- Virsraksts – fiksēts HTML -->
+<body class="page-index">
+  <main class="content-container" role="main">
     <h1 class="intro-title">Laipni lūdzam mūsu mīlestības ceļojumā!</h1>
-    <!-- Pamatteksts, kas ielādēts no Google Sheets (šūna A2, "Lapa1") -->
-    <p class="intro-text">Ielādē datus...</p>
-    
-    <!-- Sirds emoji pogas izvietotas zem teksta -->
-    <div class="hearts-container">
-      <div class="emoji-button" id="ja-button">
-        <div class="emoji-content ja-emoji">❤️</div>
-        <div class="button-label">JĀ</div>
-      </div>
-      <div class="emoji-button" id="ne-button">
-        <div class="emoji-content ne-emoji">💔</div>
-        <div class="button-label">NĒ</div>
-      </div>
+
+    <!-- Teksts no Google Sheets -->
+    <p class="intro-text" id="intro-text" aria-live="polite">Ielādē datus…</p>
+
+    <!-- Atbilžu pogas -->
+    <div class="hearts-container" role="group" aria-label="Vai turpinām?">
+      <button class="emoji-button" id="ja-button" type="button" aria-label="Jā, turpināt">
+        <span class="emoji-content ja-emoji" aria-hidden="true">❤️</span>
+        <span class="button-label">JĀ</span>
+      </button>
+
+      <button class="emoji-button" id="ne-button" type="button" aria-label="Nē, nepiekrist">
+        <span class="emoji-content ne-emoji" aria-hidden="true">💔</span>
+        <span class="button-label">NĒ</span>
+      </button>
     </div>
-  </div>
-  
-  <script>
-    // Ielādē tekstu no Google Sheets, izmantojot "action=getIndexText"
-    fetch("https://script.google.com/macros/s/AKfycbwICZRQ3SSzIHi3_pVvromAYMnC7_Fz9S4TB7ftxel31bbYj7prsoQRbzZ_itraI0jj/exec?action=getIndexText")
-      .then(response => response.text())
-      .then(data => {
-        document.querySelector('.intro-text').innerText = data;
-      })
-      .catch(error => console.error("Kļūda ielādējot tekstu no Google Sheets:", error));
-      
-    // Ja URL satur "uid" parametru, to saglabājam pāradresācijā
-    function getUidParam() {
-      const params = new URLSearchParams(window.location.search);
-      return params.has('uid') ? '?uid=' + params.get('uid') : '';
-    }
-    
-    // Funkcija, kas uzliek "mākonis" efektu un pēc 1 sekundes pāradresē uz norādīto lapu
-    function navigateTo(target) {
-      document.body.classList.add("cloud-dissolve");
-      setTimeout(() => {
-        window.location.href = target + getUidParam();
-      }, 1000);
-    }
-    
-    // "JĀ" pogai – pāreja uz play.html
-    document.getElementById("ja-button").addEventListener("click", function() {
-      navigateTo("play.html");
-    });
-    
-    // "NĒ" pogai – maina sirds simbolu uz sad emoji, izpilda collapse animāciju un pēc tam pāradresē uz sad.html
-    document.getElementById("ne-button").addEventListener("click", function() {
-      const neEmoji = document.querySelector("#ne-button .ne-emoji");
-      neEmoji.innerText = "😢";
-      neEmoji.classList.add("collapsed");
-      setTimeout(() => {
-        navigateTo("sad.html");
-      }, 1000);
-    });
-  </script>
+  </main>
+
+  <script type="module" src="script.js" defer></script>
 </body>
 </html>
